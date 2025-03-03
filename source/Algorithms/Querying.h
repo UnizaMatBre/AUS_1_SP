@@ -19,7 +19,7 @@ namespace Algorithms {
 	* \param selector : callable object which select valid items. It has one parameter
 	*/
 	template<typename InputIterType, typename OutputIterType, typename UnaryOperation>
-	void select(InputIterType& sourceStart, InputIterType& sourceEnd, OutputIterType& targetCurrent, UnaryOperation selector) {
+	void select(InputIterType sourceStart, InputIterType sourceEnd, OutputIterType targetCurrent, UnaryOperation selector) {
 		if(sourceEnd - sourceStart < 0) {
 			throw std::invalid_argument("Source start and end don't create a valid range");
 		}
