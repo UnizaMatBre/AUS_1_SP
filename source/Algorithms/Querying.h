@@ -1,6 +1,9 @@
 #ifndef QUERYING_H
 #define QUERYING_H
 
+#include <stdexcept>
+#include <iterator>
+
 namespace Algorithms {
 	/**
 	*
@@ -17,7 +20,20 @@ namespace Algorithms {
 	*/
 	template<typename InputIterType, typename OutputIterType, typename UnaryOperation>
 	void select(InputIterType& sourceStart, InputIterType& sourceEnd, OutputIterType& target, UnaryOperation selector) {
+		if(sourceEnd - sourceStart < 0) {
+			throw std::invalid_argument("Source start and end don't create a valid range");
+		}
 
+		while(sourceStart < sourceEnd) {
+			typename std::iterator_traits<InputIterType>::value_type item = *sourceStart;
+
+			if(selector(item)) {
+				*target = item;
+				++target;
+			}
+
+			++sourceStart;
+		}
 	}
 
 }
