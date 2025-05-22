@@ -6,9 +6,9 @@
 
 
 namespace Containers {
-	template <typename ItemType, typename Allocator = std::allocator<ItemType>>
+	template <typename ItemType, typename AllocatorType = std::allocator<ItemType>>
 	class ArrayList {
-		Allocator allocator_;
+		AllocatorType allocator_;
 
 		ItemType* items_ = nullptr;
 		size_t capacity_ = 0;
@@ -26,7 +26,7 @@ namespace Containers {
 		*
 		* \param allocator : allocator that will be used by collection
 		*/
-		explicit ArrayList(const Allocator& allocator) : allocator_(allocator) {}
+		explicit ArrayList(const AllocatorType& allocator) : allocator_(allocator) {}
 
 		/**
 		* Creates ArrayList with starting capacity and fills it with provided default value. Custom allocator can be provided.
@@ -35,15 +35,15 @@ namespace Containers {
 		* \param defaultValue : value to which every position will be initialized
 		* \param allocator : allocator that will be used by collection
 		*/
-		ArrayList(size_t size, ItemType defaultValue, const Allocator& allocator = Allocator()) : allocator_(allocator) {
+		ArrayList(size_t size, ItemType defaultValue, const AllocatorType& allocator = AllocatorType()) : allocator_(allocator) {
 			// allocation
 			this->capacity_ = size;
 			this->size_ = size;
-			this->items_ = std::allocator_traits<Allocator>::allocate(this->allocator_, this->capacity_);
+			this->items_ = std::allocator_traits<AllocatorType>::allocate(this->allocator_, this->capacity_);
 
 			// construction
 			for (size_t index = 0; index < this->capacity_; ++index) {
-				std::allocator_traits<Allocator>::construct(this->allocator_, &this->items_[index], defaultValue);
+				std::allocator_traits<AllocatorType>::construct(this->allocator_, &this->items_[index], defaultValue);
 			}
 		}
 
@@ -58,11 +58,11 @@ namespace Containers {
 
 			// destroy stored objects - this process goes in reverse
 			for (size_t index = this->size_ - 1; index > 0; --index) {
-				std::allocator_traits<Allocator>::destroy(this->allocator_, &this->items_[index]);
+				std::allocator_traits<AllocatorType>::destroy(this->allocator_, &this->items_[index]);
 			}
 
 			// deallocate array itself
-			std::allocator_traits<Allocator>::deallocate(this->allocator_, this->items_, this->capacity_);
+			std::allocator_traits<AllocatorType>::deallocate(this->allocator_, this->items_, this->capacity_);
 			this->items_ = nullptr;
 			this->capacity_ = 0;
 			this->size_ = 0;
