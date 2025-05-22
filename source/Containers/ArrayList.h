@@ -93,6 +93,71 @@ namespace Containers {
 			return this->size_;
 		};
 
+
+		/**
+		 * Represents basic forward input/output iterator
+		 *
+		 * TODO: Maybe convert this to bidirectional one
+		 */
+		class Iterator {
+			ItemType* position_;
+
+		public:
+			using iterator_category = std::forward_iterator_tag;
+
+			using value_type = ItemType;
+			using pointer = ItemType*;
+			using reference = ItemType&;
+			using difference_type = std::ptrdiff_t;
+
+
+			Iterator(ItemType* position) : position_(position) {}
+
+			reference operator*() const {
+				return *this->position_;
+			}
+
+			pointer operator->() {
+				return this->position_;
+			}
+
+			Iterator& operator++() {
+				++this->position_;
+
+				return *this;
+			}
+
+			Iterator& operator++(int) {
+				auto old = *this;
+
+				++(*this);
+
+				return old;
+			}
+
+			bool operator==(const Iterator& other) {
+				return this->position_ == other.position_;
+			}
+
+			bool operator!=(const Iterator& other) {
+				return this->position_ != other.position_;
+			}
+		};
+
+
+		/**
+		 * Creates iterator pointing at the beginning of ArrayList
+		 */
+		Iterator begin() {
+			return Iterator(this->items_);
+		}
+
+		/**
+		 * Creates iterator pointing over the end of ArrayList
+		 */
+		Iterator end() {
+			return Iterator(this->items_ + this->size_);
+		}
 	};
 };
 
