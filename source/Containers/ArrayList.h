@@ -6,6 +6,13 @@
 
 
 namespace Containers {
+
+	/**
+	* Class representing sequential collection that utilizes internal array storage
+	*
+	* \tparam ItemType : type of elements
+	* \tparam AllocatorType : allocator used for handling internal array
+	*/
 	template <typename ItemType, typename AllocatorType = std::allocator<ItemType>>
 	class ArrayList {
 		AllocatorType allocator_;
