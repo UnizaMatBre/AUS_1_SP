@@ -3,17 +3,22 @@
 
 #include <string>
 
-class TownData {
-	const static size_t POPULATIONS_COUNT = 5;
+namespace DataHandling {
+	class TownData {
+		const static size_t POPULATIONS_COUNT = 5;
 
-	std::string name_;
-	int idNumber_;
+		std::string name_;
+		int idNumber_;
 
-	int womenPopulations[TownData::POPULATIONS_COUNT];
-	int menPopulations[TownData::POPULATIONS_COUNT];
+		int womenPopulations_[TownData::POPULATIONS_COUNT];
+		int menPopulations_[TownData::POPULATIONS_COUNT];
 
-public:
-	TownData() = default;
-};
+	public:
+		// TODO: I don't know if this is the best approach
+		TownData() = delete;
+
+		explicit TownData(std::string* lines);
+	};
+}
 
 #endif //TOWNDATA_H
