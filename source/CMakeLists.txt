@@ -7,5 +7,6 @@ add_executable(main_app
         DataHandling/DataHolder.h
 
         Containers/ArrayList.h
+        Containers/LinkedListTree.h
 )
 
