@@ -5,5 +5,7 @@ add_executable(main_app
         DataHandling/TownData.h
 
         DataHandling/DataHolder.h
+
+        Containers/ArrayList.h
 )
 
