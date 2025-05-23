@@ -84,6 +84,50 @@ namespace Containers {
 			return true;
 		}
 
+		/**
+		 * Checks if table is too full and expands it if needed
+		 */
+		void resolveFullness_() {
+			// we will resize ONLY if item count is at least 80% of capacity
+			if (this->itemCount_ < static_cast<size_t>(this->capacity_ * 0.8)) {
+				return;
+			}
+
+			// store old internals
+			Node** oldBuckets = this->buckets_;
+			size_t oldCapacity = this->capacity_;
+
+			// create new internals
+			this->itemCount_ = 0;
+			this->capacity_ = (oldCapacity == 0) ? 8 : (oldCapacity * 2);
+			this->buckets_ = std::allocator_traits<NodeListAllocatorType>::allocate(this->nodeListAllocator_, this->capacity_);
+			for (size_t index = 0; index < this->capacity_; ++index) {
+				this->buckets_[index] = nullptr;
+			}
+
+			// insert any values from old buckets and destroys them afterward
+			for (size_t index = 0; index < oldCapacity; ++index) {
+				Node* selectedNode = oldBuckets[index];
+				Node* activeNode = selectedNode;
+
+				while (activeNode != nullptr) {
+					// remember active node and move to next one
+					auto currentNode = activeNode;
+					activeNode = activeNode->next;
+
+					// insert current node
+					this->insert_(currentNode->key(), currentNode->value());
+
+					// destroy current node
+					std::allocator_traits<ItemAllocatorType>::destroy(this->itemAllocator_, currentNode->itemPtr());
+					std::allocator_traits<NodeAllocatorType>::destroy(this->nodeAllocator_, currentNode);
+					std::allocator_traits<NodeAllocatorType>::deallocate(this->nodeAllocator_, currentNode, 1);
+				};
+			};
+
+			// deallocate the old bucket array
+			std::allocator_traits<NodeListAllocatorType>::deallocate(this->nodeListAllocator_, oldBuckets, oldCapacity);
+		};
 
 
 	public:
