@@ -138,6 +138,19 @@ namespace Containers {
 			nodeAllocator_(this->itemAllocator_),
 			nodeListAllocator_(this->itemAllocator_)
 		{};
+
+		/**
+		 * Takes key/value pair and tries to insert it into table.
+		 *
+		 * \param key : unique identifier of pair
+		 * \param value : value stored in pair
+		 * \return true : if key/value were successfully inserted
+		 * \return false : if same key already exists in table
+		 */
+		bool insert(const KeyType& key, ValueType& value) {
+			this->resolveFullness_();
+			return this->insert_(key, value);
+		};
 	};
 
 }
