@@ -5,7 +5,14 @@
 #include <bits/locale_facets_nonio.h>
 
 namespace Containers {
-
+	/**
+	 * Represents hash table with efficient access to its members.
+	 * Internally utilizes separate chaining (i.e keys that fall into same bucket create linked list)
+	 *
+	 * \tparam KeyType : type of key object that identifies pair
+	 * \tparam ValueType : type of value stored in pair
+	 * \tparam AllocatorType : type of allocator used by table internally
+	 */
 	template <
 		typename KeyType,
 		typename ValueType,
@@ -21,6 +28,11 @@ namespace Containers {
 		using NodeAllocatorType = typename std::allocator_traits<AllocatorType>::template rebind_alloc<Node>;
 		using NodeListAllocatorType = typename std::allocator_traits<AllocatorType>::template rebind_alloc<Node*>;
 
+		/**
+		 * Represents one node in bucket's linked list
+		 *
+		 * TODO: Maybe this entire thing could be replaced by linked list class? Idk
+		 */
 		struct Node {
 			Node* next = nullptr;
 			char itemBytes[sizeof(ItemType)];
