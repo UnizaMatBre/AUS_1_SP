@@ -9,5 +9,6 @@ add_executable(main_app
         Containers/ArrayList.h
         Containers/LinkedListTree.h
         Containers/Table.h
+        Containers/LinkedTable.h
 )
 
