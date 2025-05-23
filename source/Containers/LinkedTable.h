@@ -170,6 +170,33 @@ namespace Containers {
 		{};
 
 		/**
+		 * Destroys table
+		 */
+		~LinkedTable() {
+			for (size_t index = 0; index < this->capacity_; ++index) {
+				Node* activeNode = this->buckets_[index];
+
+				while (activeNode != nullptr) {
+					// remember active node and move to next one
+					auto currentNode = activeNode;
+					activeNode = activeNode->next;
+
+					// insert current node
+					const KeyType& key = currentNode->key();
+					ValueType& value = currentNode->value();
+					this->insert_(key, value);
+
+					// destroy current node
+					std::allocator_traits<ItemAllocatorType>::destroy(this->itemAllocator_, currentNode->itemPtr());
+					std::allocator_traits<NodeAllocatorType>::destroy(this->nodeAllocator_, currentNode);
+					std::allocator_traits<NodeAllocatorType>::deallocate(this->nodeAllocator_, currentNode, 1);
+				};
+			};
+
+			std::allocator_traits<NodeListAllocatorType>::deallocate(this->nodeListAllocator_, this->buckets_, this->capacity_);
+		}
+
+		/**
 		 * Takes key/value pair and tries to insert it into table.
 		 *
 		 * \param key : unique identifier of pair
