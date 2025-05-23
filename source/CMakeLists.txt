@@ -1,6 +1,9 @@
 add_executable(main_app
         main.cpp
 
+        Algorithms/Querying.h
+        Algorithms/Sorting.h
+
         DataHandling/TownData.cpp
         DataHandling/TownData.h
 
