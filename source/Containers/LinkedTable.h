@@ -42,13 +42,16 @@ namespace Containers {
 			ValueType& value() { return this->itemPtr()->second; };
 		};
 
+		// allocators
 		ItemAllocatorType itemAllocator_;
 		NodeAllocatorType nodeAllocator_;
 		NodeListAllocatorType nodeListAllocator_;
 
+		// tools for key indexing and comparing
 		std::hash<KeyType> keyHash_;
 		std::equal_to<KeyType> keyEqual_;
 
+		// array of buckets and informations about it
 		Node** buckets_ = nullptr;
 		size_t capacity_ = 0;
 		size_t itemCount_ = 0;
