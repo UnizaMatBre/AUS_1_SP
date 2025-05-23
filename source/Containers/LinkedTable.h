@@ -2,6 +2,7 @@
 #define LINKEDTABLE_H
 #include <functional>
 #include <stdexcept>
+#include <bits/locale_facets_nonio.h>
 
 namespace Containers {
 
@@ -24,9 +25,9 @@ namespace Containers {
 			Node* next = nullptr;
 			char itemBytes[sizeof(ItemType)];
 
-			ItemType* itemPtr() { return static_cast<ItemType*>(&itemBytes); };
+			ItemType* itemPtr() { return reinterpret_cast<ItemType*>(&itemBytes); };
 			const KeyType& key() { return this->itemPtr()->first; };
-			ItemType& item() { return this->itemPtr()->second; };
+			ValueType& value() { return this->itemPtr()->second; };
 		};
 
 		ItemAllocatorType itemAllocator_;
@@ -73,7 +74,7 @@ namespace Containers {
 
 
 			// create new node at the start of the chain in bucket
-			this->buckets_[index] = std::allocator_traits<NodeAllocatorType>::template rebind_alloc<Node>(this->nodeAllocator_, 1);
+			this->buckets_[index] = std::allocator_traits<NodeAllocatorType>::allocate(this->nodeAllocator_, 1);
 			std::allocator_traits<NodeAllocatorType>::construct(this->nodeAllocator_, this->buckets_[index]);
 			std::allocator_traits<ItemAllocatorType>::construct(this->itemAllocator_, this->buckets_[index]->itemPtr(), std::make_pair(key, value));
 
@@ -117,7 +118,9 @@ namespace Containers {
 					activeNode = activeNode->next;
 
 					// insert current node
-					this->insert_(currentNode->key(), currentNode->value());
+					const KeyType& key = currentNode->key();
+					ValueType& value = currentNode->value();
+					this->insert_(key, value);
 
 					// destroy current node
 					std::allocator_traits<ItemAllocatorType>::destroy(this->itemAllocator_, currentNode->itemPtr());
@@ -183,19 +186,49 @@ namespace Containers {
 
 
 		ValueType& operator[](const KeyType& key) {
-			throw std::runtime_error("Not implemented yet");
+			this->resolveFullness_();
+			auto result = this->findNode_(key);
+
+			// node exists? Return its value
+			if (result.first) {
+				return (*result.second)->value();
+			}
+
+			// node doesn't exist? Create it and return its value
+			Node* newNode = std::allocator_traits<NodeAllocatorType>::allocate(this->nodeAllocator_, 1);
+			std::allocator_traits<NodeAllocatorType>::construct(this->nodeAllocator_, newNode);
+
+			// THIS REQUIRES THAT VALUE TYPE HAS NON-PARAM CONSTRUCTOR
+			std::allocator_traits<ItemAllocatorType>::construct(this->itemAllocator_, newNode, std::make_pair(key, {}));
+
+			auto previousFirst = *result.second;
+			*(result.second) = newNode;
+
+			return newNode->value();
 		}
 
-		const ValueType& operator[](const KeyType& key) const {
-			throw std::runtime_error("Not implemented yet");
-		}
+
 
 		ValueType& at(const KeyType& key) {
-			throw std::runtime_error("Not implemented yet");
+			this->resolveFullness_();
+
+			auto result = this->findNode_(key);
+			if (result.first == false) {
+				throw std::out_of_range("Key not found");
+			}
+
+			return (*result.second)->value();
 		}
 
 		const ValueType& at(const KeyType& key) const {
-			throw std::runtime_error("Not implemented yet");
+			this->resolveFullness_();
+
+			auto result = this->findNode_(key);
+			if (result.first == false) {
+				throw std::out_of_range("Key not found");
+			}
+
+			return (*result.second)->value();
 		}
 	};
 
