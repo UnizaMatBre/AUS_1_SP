@@ -175,6 +175,33 @@ namespace Containers {
 			nodeListAllocator_(this->itemAllocator_)
 		{};
 
+
+		/**
+		* Copy constructor
+		*/
+		LinkedTable(const LinkedTable& other) : itemAllocator_(other.itemAllocator_), nodeAllocator_(other.nodeAllocator_), nodeListAllocator_(other.nodeListAllocator_) {
+			this->capacity_ = other.capacity_;
+			this->itemCount_ = 0;
+			this->buckets_ = std::allocator_traits<NodeListAllocatorType>::allocate(this->nodeListAllocator_, this->capacity_);
+
+			for (size_t index = 0; index < other.capacity_; ++index) {
+				Node* selectedNode = other.buckets_[index];
+				Node* activeNode = selectedNode;
+
+				while (activeNode != nullptr) {
+					// remember active node and move to next one
+					auto currentNode = activeNode;
+					activeNode = activeNode->next;
+
+					// insert current node
+					const KeyType& key = currentNode->key();
+					ValueType& value = currentNode->value();
+					this->insert_(key, value);
+				};
+			};
+		};
+
+
 		/**
 		 * Destroys table
 		 */
