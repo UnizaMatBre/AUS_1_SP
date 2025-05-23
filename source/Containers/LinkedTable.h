@@ -42,6 +42,13 @@ namespace Containers {
 		size_t itemCount_ = 0;
 
 
+		void finalizeNode_(Node* node) {
+			std::allocator_traits<ItemAllocatorType>::destroy(this->itemAllocator_, node->itemPtr());
+			std::allocator_traits<NodeAllocatorType>::destroy(this->nodeAllocator_, node);
+			std::allocator_traits<NodeAllocatorType>::deallocate(this->nodeAllocator_, node, 1);
+		}
+
+
 		/**
 		 * Takes key/value pair and tries to insert it into table.
 		 * Important note that this doesn't check for fullness.
@@ -123,9 +130,7 @@ namespace Containers {
 					this->insert_(key, value);
 
 					// destroy current node
-					std::allocator_traits<ItemAllocatorType>::destroy(this->itemAllocator_, currentNode->itemPtr());
-					std::allocator_traits<NodeAllocatorType>::destroy(this->nodeAllocator_, currentNode);
-					std::allocator_traits<NodeAllocatorType>::deallocate(this->nodeAllocator_, currentNode, 1);
+					this->finalizeNode_(currentNode);
 				};
 			};
 
@@ -181,15 +186,8 @@ namespace Containers {
 					auto currentNode = activeNode;
 					activeNode = activeNode->next;
 
-					// insert current node
-					const KeyType& key = currentNode->key();
-					ValueType& value = currentNode->value();
-					this->insert_(key, value);
-
 					// destroy current node
-					std::allocator_traits<ItemAllocatorType>::destroy(this->itemAllocator_, currentNode->itemPtr());
-					std::allocator_traits<NodeAllocatorType>::destroy(this->nodeAllocator_, currentNode);
-					std::allocator_traits<NodeAllocatorType>::deallocate(this->nodeAllocator_, currentNode, 1);
+					this->finalizeNode_(currentNode);
 				};
 			};
 
