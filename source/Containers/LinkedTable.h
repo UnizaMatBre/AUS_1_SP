@@ -1,6 +1,7 @@
 #ifndef LINKEDTABLE_H
 #define LINKEDTABLE_H
 #include <functional>
+#include <stdexcept>
 
 namespace Containers {
 
@@ -151,6 +152,25 @@ namespace Containers {
 			this->resolveFullness_();
 			return this->insert_(key, value);
 		};
+
+
+
+
+		ValueType& operator[](const KeyType& key) {
+			throw std::runtime_error("Not implemented yet");
+		}
+
+		const ValueType& operator[](const KeyType& key) const {
+			throw std::runtime_error("Not implemented yet");
+		}
+
+		ValueType& at(const KeyType& key) {
+			throw std::runtime_error("Not implemented yet");
+		}
+
+		const ValueType& at(const KeyType& key) const {
+			throw std::runtime_error("Not implemented yet");
+		}
 	};
 
 }
