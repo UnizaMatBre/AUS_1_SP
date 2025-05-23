@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <functional>
+#include <iostream>
 
 
 namespace Containers {
@@ -150,6 +151,21 @@ namespace Containers {
 			++this->occupied_;
 
 			return true;
+		}
+
+
+
+		void dumpInternals() {
+			for (size_t index = 0; index < this->capacity_; ++index) {
+				if (this->buckets_[index].status == Bucket::Status::Valuable) {
+					std::cout << this->buckets_[index].key()  << " -> " << this->buckets_[index].value() << std::end;
+				}
+				else {
+					std::cout << "empty" << std::endl;
+				}
+
+			}
+
 		}
 	};
 }
