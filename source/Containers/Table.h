@@ -25,14 +25,17 @@ namespace Containers {
 		*/
 		struct Bucket {
 			enum class Status { Empty, Valuable, Deleted };
-			Status status;
+			Status status = Status::Empty;
 
 			// this is done to prevent automatic construction of item
 			char itemBytes[sizeof(ItemType)];
 
 			ItemType* itemPtr() {
-				return reinterpret_cast<ItemType>(&itemBytes);
+				return reinterpret_cast<ItemType*>(&this->itemBytes);
 			}
+
+			const KeyType& key() { return this->itemPtr()->first; }
+			ValueType& value() { return this->itemPtr()->second; }
 		};
 
 		ItemAllocatorType itemAllocator_;
@@ -45,11 +48,54 @@ namespace Containers {
 		size_t capacity_ = 0;
 		size_t occupied_ = 0;
 
+
+		/**
+		 * Checks if map is full enough and if yes, expands internal bucket array
+		 */
+		void resolveFullness_() {
+			if (this->occupied_ < static_cast<size_t>(this->capacity_ * 0.8)) {
+				return;
+			}
+
+			size_t oldCapacity = this->capacity_;
+			Bucket* oldBuckets = this->buckets_;
+
+			this->capacity_ = (oldCapacity == 0) ? 8 : oldCapacity * 2;
+			this->occupied_ = 0;
+			this->buckets_ = std::allocator_traits<BucketAllocatorType>::allocate(this->bucketAllocator_, this->capacity_);
+			for (size_t index = 0; index < this->capacity_; ++index) {
+				std::allocator_traits<BucketAllocatorType>::construct(this->bucketAllocator_, &this->buckets_[index]);
+			}
+
+			for (size_t index = 0; index < oldCapacity; ++index) {
+				Bucket* oldBucket = &oldBuckets[index];
+
+				if (oldBucket->status == Bucket::Status::Valuable) {
+					size_t itemIndex = this->keyHash_(oldBucket->key()) % this->capacity_;
+
+					while (this->buckets_[itemIndex].status != Bucket::Status::Empty) {
+						itemIndex = (itemIndex + 1) % this->capacity_;
+					}
+
+					std::allocator_traits<BucketAllocatorType>::construct(
+						this->bucketAllocator_, &this->buckets_[index]
+					);
+
+					std::allocator_traits<ItemAllocatorType>::construct(
+						this->itemAllocator_, this->buckets_[index].itemPtr()
+					);
+
+					this->buckets_[index].status = Bucket::Status::Valuable;
+					++this->occupied_;
+				}
+			}
+		}
+
 	public:
 		/**
 		 * Creates empty table with default constructed allocators and tools
 		 */
-		Table() : itemAllocator_(), bucketAllocator_(this.itemAllocator_) {}
+		Table() : itemAllocator_(), bucketAllocator_(this->itemAllocator_) {}
 
 
 		/**
@@ -63,7 +109,7 @@ namespace Containers {
 		* Destroys table
 		*/
 		~Table() {
-			if (this.buckets_ == nullptr) {
+			if (this->buckets_ == nullptr) {
 				return;
 			}
 
@@ -77,6 +123,33 @@ namespace Containers {
 			}
 
 			std::allocator_traits<BucketAllocatorType>::deallocate(this->bucketAllocator_, this->buckets_, this->capacity_);
+		}
+
+
+
+		bool insert(const KeyType& key, ValueType& value) {
+			this->resolveFullness_();
+
+			size_t index = this->keyHash_(key) % this->capacity_;
+
+			while (this->buckets_[index].status != Bucket::Status::Empty) {
+				if (this->keyEqual_(key, this->buckets_[index].key())) {
+					return false;
+				}
+
+				index = (index + 1) % this->capacity_;
+			}
+
+			std::allocator_traits<ItemAllocatorType>::construct(
+				this->itemAllocator_,
+				this->buckets_[index].itemPtr(),
+				std::make_pair(key, value)
+			);
+
+			this->buckets_[index].status = Bucket::Status::Valuable;
+			++this->occupied_;
+
+			return true;
 		}
 	};
 }
