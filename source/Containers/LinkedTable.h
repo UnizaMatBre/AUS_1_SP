@@ -225,7 +225,8 @@ namespace Containers {
 			std::allocator_traits<NodeAllocatorType>::construct(this->nodeAllocator_, newNode);
 
 			// THIS REQUIRES THAT VALUE TYPE HAS NON-PARAM CONSTRUCTOR
-			std::allocator_traits<ItemAllocatorType>::construct(this->itemAllocator_, newNode, std::make_pair(key, {}));
+			// IF IT DOESN'T, THEN IT IS YOUR FAULT YOU USE THIS UNSAFE METHOD
+			std::allocator_traits<ItemAllocatorType>::construct(this->itemAllocator_, newNode->itemPtr(), std::make_pair(key, {}));
 
 			auto previousFirst = *result.second;
 			*(result.second) = newNode;
