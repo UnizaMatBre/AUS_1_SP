@@ -131,6 +131,32 @@ namespace Containers {
 		};
 
 
+		/**
+		 * Searches for node with same key as passed one.
+		 *
+		 * @param key key we are looking for
+		 * @return <true, Node**> when node is found - Node** points to said node
+		 * @return <false, Node**> when node is not found - Node** points to place where new node can be inserted
+		 */
+		std::pair<bool, Node**> findNode_(const KeyType& key) {
+			size_t index = this->keyHash_(key) % this->capacity_;
+
+			Node* activeNode = this->buckets_[index];
+
+			// if bucket node is not null, we need to check nodes there
+			if (activeNode != nullptr) {
+				while (activeNode != nullptr) {
+					if (this->keyEqual_(key, activeNode->key())) {
+						return std::make_pair(true, &activeNode);
+					}
+					activeNode = activeNode->next;
+				}
+			}
+
+			// either bucket is null or no node had key we wanted
+			return std::make_pair(false, &this->buckets_[index]);
+		}
+
 	public:
 		LinkedTable() : itemAllocator_(), nodeAllocator_(), nodeListAllocator_() {};
 
