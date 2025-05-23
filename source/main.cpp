@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <optional>
 
 #include "DataHandling/TownData.h"
 #include "DataHandling/DataHolder.h"
@@ -13,6 +14,6 @@ int main() {
 
 		loadTowns(towns_iter);
 
-
+		std::optional<DataHandling::TownData> town;
 	return 0;
 }

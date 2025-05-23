@@ -28,7 +28,11 @@ namespace Containers {
 			Status status;
 
 			// this is done to prevent automatic construction of item
-			union {char dummy_; ItemType item;};
+			char itemBytes[sizeof(ItemType)];
+
+			ItemType* itemPtr() {
+				return reinterpret_cast<ItemType>(&itemBytes);
+			}
 		};
 
 		ItemAllocatorType itemAllocator_;
@@ -67,12 +71,12 @@ namespace Containers {
 				Bucket* bucket = &this->buckets_[index];
 
 				if (bucket->status == Bucket::Status::Valuable) {
-					std::allocator_traits<ItemAllocatorType>::destroy(this->itemAllocator_, bucket->item);
+					std::allocator_traits<ItemAllocatorType>::destroy(this->itemAllocator_, bucket->itemPtr());
 				}
 				std::allocator_traits<BucketAllocatorType>::destroy(this->bucketAllocator_, bucket);
 			}
 
-			std::allocator_traits<BucketAllocatorType>::deallocate(this->bucketAllocator_, this->buckets_);
+			std::allocator_traits<BucketAllocatorType>::deallocate(this->bucketAllocator_, this->buckets_, this->capacity_);
 		}
 	};
 }
