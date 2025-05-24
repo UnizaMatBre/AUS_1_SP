@@ -1,8 +1,9 @@
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
-#include <memory>
 
 #include <memory>
+#include <stdexcept>
+
 
 namespace Containers {
 
@@ -37,6 +38,55 @@ namespace Containers {
 		}
 
 	public:
+
+		/**
+		* Creates empty collection with default constructed allocator
+		*/
+		LinkedList() : itemAllocator_(), nodeAllocator_(this->itemAllocator_) {};
+
+		/**
+		* Creates empty collection with provided allocator
+		*
+		* \param allocator : allocator that will be used by collection
+		*/
+		LinkedList(const AllocatorType& allocator) : itemAllocator_(allocator), nodeAllocator_(this->itemAllocator_) {};
+
+
+		/**
+		* Returns constant reference to item at specified index. Doesn't perform bound checking.
+		*
+		* \param index : index of requested item.
+		* \return item at specified index
+		*/
+		ItemType& operator[](const size_t index) {
+			Node* current = this->front_;
+
+			for (int counter = 0; counter < index; ++counter) {
+				current = current->next;
+			}
+			return current->value;
+		}
+
+
+		/**
+		* Returns constant reference to item at specified index. Performs bound checking.
+		*
+		* \param index : index of requested item.
+		* \return item at specified index
+		* \throw std::out_of_range index is larger than number of nodes
+		*/
+		ItemType& at(const size_t index) {
+			Node* current = this->front_;
+
+			for (int counter = 0; counter < index; ++counter) {
+				if (current == nullptr) {
+					throw std::out_of_range();
+				}
+				current = current->next;
+			}
+			return current->value;
+		}
+
 
 	};
 
