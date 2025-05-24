@@ -125,7 +125,7 @@ namespace Containers {
 				if (this->position_->sibling != nullptr) {
 					// true: move to sibling
 					this->position_ = this->position_->sibling;
-				};
+				}
 				else {
 					// false: check if queue is empty
 					if (this->queue_.empty()) {
@@ -187,6 +187,34 @@ namespace Containers {
 				}
 
 				return true;
+			};
+
+
+			template<typename UnaryPredicate>
+			bool move_down(UnaryPredicate selector) {
+				// we can't move if current position is null or children is null
+				if (this->position_ == nullptr || this->position_->children == nullptr) {
+					return false;
+				};
+
+
+				auto current = this->position_;
+
+				// iterate while current node isn't null
+				while (current != nullptr) {
+					// is selector happy? Move there
+					if (selector(*current)) {
+						this->position_ = current;
+						this->queue_.clear();
+						return true;
+					}
+
+					// it isn't happy? Move to next sibling and try
+					current = current->sibling;
+				}
+
+				// we looked all siblings and selector was not happy with any of them
+				return false;
 			}
 
 

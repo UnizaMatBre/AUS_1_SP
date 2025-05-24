@@ -10,6 +10,18 @@
 #include "DataHandling/TownData.h"
 #include "DataHandling/DataHolder.h"
 
+#include "Containers/LinkedList.h"
+
+
+struct DestroyCheck {
+	int id;
+
+	DestroyCheck(int id) : id(id) {}
+
+	~DestroyCheck() {
+		std::cout << "DestroyCheck " << this->id << " successful" << std::endl;
+	}
+};
 
 int main() {
 	/*
@@ -22,16 +34,21 @@ int main() {
 	*/
 
 
-	std::vector<int> vals = {5,6,7,1,3,2,4,9,8};
+	auto list = Containers::LinkedList<DestroyCheck>();
 
-	Algorithms::selectionSort(
-		vals.begin(),
-		vals.end(),
-		[](int left, int right) { return right - left; }
-	);
+	for (int index = 0; index < 10; index++) {
+		auto destroy = DestroyCheck(index);
+		list.push_back(destroy);
+	}
 
-	for (auto i : vals) {
-		std::cout << i << std::endl;
+	for (int index = 0; index < 10; index++) {
+		auto destroy = DestroyCheck(index + 10);
+		list.push_back(destroy);
+		list.pull_front();
+	}
+
+	for (int index = 0; index < 10; index++) {
+		list.pull_front();
 	}
 
 	return 0;
