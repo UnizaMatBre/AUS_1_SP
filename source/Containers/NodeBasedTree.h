@@ -33,7 +33,7 @@ namespace Containers {
 		}
 
 	public:
-		explicit TreeNode(ItemType& item, const AllocatorType& allocator = AllocatorType()) : nodeAllocator_(allocator), item_(item) {}
+		explicit TreeNode(const ItemType& item, const AllocatorType& allocator = AllocatorType()) : nodeAllocator_(allocator), item_(item) {}
 
 		~TreeNode() {
 			this->finalize_node_(this->children_);
@@ -41,7 +41,7 @@ namespace Containers {
 		}
 
 
-		void push_back_children(ItemType& item) {
+		void push_back_children(const ItemType& item) {
 			MyType* newNode = std::allocator_traits<NodeAllocatorType>::allocate(this->nodeAllocator_, 1);
 			std::allocator_traits<NodeAllocatorType>::construct(this->nodeAllocator_, newNode, item);
 
