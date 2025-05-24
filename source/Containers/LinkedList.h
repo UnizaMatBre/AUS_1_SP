@@ -16,6 +16,7 @@ namespace Containers {
 			Node(const ItemType& value) : value(value) {};
 		};
 
+		using MyType = LinkedList<ItemType, AllocatorType>;
 		using ItemAllocatorType = AllocatorType;
 		using NodeAllocatorType = typename std::allocator_traits<AllocatorType>::template rebind_alloc<LinkedList::Node>;
 
@@ -50,6 +51,26 @@ namespace Containers {
 		*/
 		LinkedList(const AllocatorType& allocator) : itemAllocator_(allocator), nodeAllocator_(this->itemAllocator_) {};
 
+
+		LinkedList(const MyType& other) : itemAllocator_(other.itemAllocator_), nodeAllocator_(other.nodeAllocator_) {
+			if (other.front_ == nullptr) {
+				return;
+			}
+
+			auto otherFirstNode = other.front_;
+
+			auto thisFirstNode = std::allocator_traits<NodeAllocatorType>::allocate(this->nodeAllocator_, 1);
+			std::allocator_traits<NodeAllocatorType>::construct(this->nodeAllocator_, thisFirstNode, otherFirstNode->value);
+
+			while (otherFirstNode->next != nullptr) {
+				otherFirstNode = otherFirstNode->next;
+
+				thisFirstNode->next = std::allocator_traits<NodeAllocatorType>::allocate(this->nodeAllocator_, 1);
+				std::allocator_traits<NodeAllocatorType>::construct(this->nodeAllocator_, thisFirstNode->next, otherFirstNode->value);
+
+				thisFirstNode = thisFirstNode->next;
+			};
+		};
 		/**
 		 * Destroys linked list
 		 */
