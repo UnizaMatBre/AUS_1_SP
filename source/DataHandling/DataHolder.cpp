@@ -41,9 +41,10 @@ DataHandling::DataHolder::DataHolder() {
 			    	restricted_id = field.substr(1, field.size() - 2);
 				});
 
-			// insert into geographic area table
-			auto land_unit_ptr = &this->geographic_areas_table_.insert(name, {name, full_id, 1});
+			auto land_unit_ptr = &this->land_units_list_.push_back({name, full_id, 1});
 
+			// insert into geographic area table
+			this->geographic_areas_table_.insert(name, land_unit_ptr);
 
 			// create new node
 			auto new_node_ptr = this->root_node_.push_back_children(land_unit_ptr);
