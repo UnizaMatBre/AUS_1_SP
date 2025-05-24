@@ -55,4 +55,42 @@ DataHandling::DataHolder::DataHolder() {
 
 	}
 
+	// load republics
+	{
+		auto stream = std::ifstream(R"(../../data/republiky.csv)");
+		std::string line;
+
+		while (getline(stream, line)) {
+
+			std::string name, full_id, restricted_id;
+
+			// read data
+			auto csv_reader = DataHandling::CsvLineReader(line);
+			csv_reader
+				.handleField([&name](const std::string& field ) {
+					name = field;
+				})
+				->handleField([&full_id, &restricted_id](const std::string& field ) {
+					full_id = field;
+					restricted_id = field.substr(1, field.size() - 2);
+				});
+
+			auto land_unit_ptr = &this->land_units_list_.push_back({name, full_id, 1});
+
+			// insert into geographic area table
+			this->republics_table_.insert(name, land_unit_ptr);
+
+			// get parent node
+			std::string parent_restricted_id = restricted_id.substr(0, restricted_id.size() - 1);
+			auto parent_node = id_to_node_mapper.at(parent_restricted_id);
+
+			// create new node
+			auto new_node_ptr = parent_node->push_back_children(land_unit_ptr);
+
+			// insert this new node into mapping table
+			id_to_node_mapper.insert(restricted_id, new_node_ptr);
+		};
+
+	}
+
 }
