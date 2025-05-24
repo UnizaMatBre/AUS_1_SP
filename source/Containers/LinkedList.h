@@ -28,7 +28,7 @@ namespace Containers {
 
 		// this is done in outer class so we don't need to pass allocator to node
 		void finishNode_(Node* node) {
-			if (node->next != nullptr) {
+			if (node != nullptr) {
 				this->finishNode_(node->next);
 
 				std::allocator_traits<ItemAllocatorType>::destroy(this->itemAllocator_, node->value);
@@ -50,6 +50,18 @@ namespace Containers {
 		* \param allocator : allocator that will be used by collection
 		*/
 		LinkedList(const AllocatorType& allocator) : itemAllocator_(allocator), nodeAllocator_(this->itemAllocator_) {};
+
+		/**
+		 * Destroys linked list
+		 */
+		~LinkedList() {
+			if (this->front_ != nullptr) {
+				this->finishNode_(this->front_);
+				this->front_ = nullptr;
+			}
+
+			this->back_ = nullptr;
+		}
 
 
 		/**
