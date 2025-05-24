@@ -130,6 +130,53 @@ namespace Containers {
 				return *this;
 			};
 
+			/**
+			* Tries to move to the parent node
+			*
+			* /returns true : parent node exists - iterator moved to it
+			* /returns false : parent node doesn't exist - iterator stays at current node
+			*/
+			bool move_to_parent() {
+				if (this->position_->get_parent() == nullptr) {
+					return false;
+				}
+				this->position_ = this->position_->get_parent();
+				return true;
+			};
+
+
+			/**
+			 * Tries to move into first children that is accepted by selector
+			 *
+			 * \tparam UnaryPredicate : callable (ItemType) -> bool
+			 * \param predicate : callable that e
+			 * \return true : move did happen - iterator now points at children
+			 * \return false : move didn't happen - either there are no children or no children was accepted by predicate
+			 */
+			template <typename UnaryPredicate>
+			bool move_to_children(UnaryPredicate predicate) {
+				// we can't move if current position is null or children is null
+				if (this->position_ == nullptr || this->position_->get_children() == nullptr) {
+					return false;
+				};
+
+				auto current = this->position_;
+
+				// iterate while current node isn't null
+				while (current != nullptr) {
+					// is predicate happy? Move there
+					if (predicate(*current)) {
+						this->position_ = current;
+						this->queue_.clear();
+						return true;
+					}
+					// it isn't happy? Move to next sibling and try
+					current = current->sibling;
+				}
+
+				// we looked all siblings and selector was not happy with any of them
+				return false;
+			}
 
 		};
 
