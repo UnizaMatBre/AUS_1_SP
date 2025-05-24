@@ -81,9 +81,10 @@ namespace Containers {
 		/**
 		 * Insert item to the back of list.
 		 *
-		 * @param value item to be inserted
+		 * \param value : item to be inserted
+		 * \return value : item that is now stored inside of list
 		 */
-		void push_back(const ItemType& value) {
+		ItemType& push_back(const ItemType& value) {
 			// create new node
 			Node* newNode = std::allocator_traits<NodeAllocatorType>::allocate(this->nodeAllocator_, 1);
 			std::allocator_traits<NodeAllocatorType>::construct(this->nodeAllocator_, newNode, value);
@@ -96,6 +97,8 @@ namespace Containers {
 				this->back_->next = newNode;
 				this->back_ = newNode;
 			}
+
+			return newNode->value;
 		}
 
 		/**
