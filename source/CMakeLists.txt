@@ -3,6 +3,7 @@ add_executable(main_app
 
         Algorithms/Querying.h
         Algorithms/Sorting.h
+        Algorithms/Predicates.h
 
         DataHandling/TownData.cpp
         DataHandling/TownData.h
