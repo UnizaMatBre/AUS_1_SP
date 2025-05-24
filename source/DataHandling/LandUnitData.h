@@ -20,6 +20,19 @@ namespace DataHandling {
 			this->identifier_ = identifier;
 			this->territory = territory;
 		};
+
+		const std::string& get_name() const {
+			return this->name_;
+		};
+
+		const std::string& get_identifier() const {
+			return this->identifier_;
+		};
+
+		int get_territory_level() const {
+			return this->territory;
+		}
+
 	};
 }
 
