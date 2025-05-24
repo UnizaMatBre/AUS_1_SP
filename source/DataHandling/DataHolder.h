@@ -52,6 +52,8 @@ namespace DataHandling {
 
 		// root of hierarchy
 		Containers::LinkedListTree<LandUnitData*> root_Node_ = {&austria_unit_};
+	public:
+		DataHolder();
 
 	};
 }
