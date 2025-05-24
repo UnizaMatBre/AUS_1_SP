@@ -154,6 +154,42 @@ namespace Containers {
 			bool operator!=(const Iterator& other) const {
 				return this->position_ != other.position_;
 			};
+
+			/**
+			* Tries to move to the parent node
+			*
+			* /returns true : parent node exists - iterator moved to it
+			* /returns false : parent node doesn't exist - iterator stays at current node
+			*/
+			bool move_up() {
+				if (this->position_ == nullptr || this->position_->parent == nullptr) {
+					return false;
+				};
+
+				this->position_ = this->position_->parent;
+				this->queue_.clear();
+				return true;
+			}
+
+			/**
+			* Tries to move to the root node
+			*
+			* /returns true : iterator needed to move to root node
+			* /returns false : iterator is already in root node
+			*/
+			bool move_to_root() {
+				if (this->position_ == nullptr || this->position_->parent == nullptr) {
+					return false;
+				}
+
+				while (this->position_->parent != nullptr) {
+					this->position_ = this->position_->parent;
+				}
+
+				return true;
+			}
+
+
 		};
 
 	};
