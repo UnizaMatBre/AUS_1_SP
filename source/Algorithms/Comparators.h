@@ -4,6 +4,9 @@
 #include "../DataHandling/LandUnitData.h"
 
 namespace Algorithms {
+	/**
+	 * Represents comparator that compares two units by their name alphabetically
+	 */
 	int CompareAlphabetical(const DataHandling::LandUnitData& left, const DataHandling::LandUnitData& right);
 
 
