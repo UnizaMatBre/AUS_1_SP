@@ -7,7 +7,9 @@ add_executable(main_app
         DataHandling/TownData.cpp
         DataHandling/TownData.h
 
+        DataHandling/LandUnitData.h
         DataHandling/DataHolder.h
+
 
         Containers/ArrayList.h
         Containers/LinkedList.h
