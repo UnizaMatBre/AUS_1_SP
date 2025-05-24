@@ -156,6 +156,14 @@ namespace Containers {
 				return old;
 			}
 
+			Iterator operator+(difference_type distance) const {
+				return Iterator(position_ + distance);
+			}
+
+			Iterator operator-(difference_type distance) const {
+				return Iterator(position_ - distance);
+			}
+
 			bool operator==(const Iterator& other) {
 				return this->position_ == other.position_;
 			}
