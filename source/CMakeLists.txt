@@ -10,6 +10,7 @@ add_executable(main_app
         DataHandling/DataHolder.h
 
         Containers/ArrayList.h
+        Containers/LinkedList.h
         Containers/LinkedListTree.h
         Containers/Table.h
         Containers/LinkedTable.h
