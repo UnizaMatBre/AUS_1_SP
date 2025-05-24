@@ -135,7 +135,7 @@ namespace Containers {
 					else {
 						// false: move to top of queue
 						this->position_ = this->queue_.front();
-						this->queue_.pop_front();
+						this->queue_.pull_front();
 					};
 				};
 				return *this;
@@ -215,6 +215,38 @@ namespace Containers {
 
 				// we looked all siblings and selector was not happy with any of them
 				return false;
+			};
+
+
+			/**
+			* Inserts new children into node.
+			* If there are other children nodes, it will be inserted at the end.
+			*
+			* \param item : item to be inserted as children
+			*/
+			void insert_children(ItemType& item) {
+				if (this->position_ == nullptr) {
+					throw std::out_of_range("Cannot insert children into non-existing node.")
+				};
+
+
+				// create new node
+				Node* newNode = std::allocator_traits<NodeAllocatorType>::allocate(myTree_.nodeAllocator_, 1);
+				std::allocator_traits<NodeAllocatorType>::construct(myTree_.nodeAllocator_, newNode, item);
+
+				if (this->position_->children == nullptr) {
+					this->position_->children = newNode;
+					return;
+				};
+
+				Node* endChild = this->position_->children;
+
+				while (endChild->sibling != nullptr) {
+					endChild = endChild->sibling;
+				};
+
+				endChild->sibling = newNode;
+
 			}
 
 
