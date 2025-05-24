@@ -16,7 +16,7 @@ namespace Algorithms {
 	 * \param comparator callable with 2 parameters which determined ordering (returns integer)
 	 */
 	template<typename SortedIterType, typename ComparatorType>
-	void selectionSort(SortedIterType start, SortedIterType end, ComparatorType comparator) {
+	void selection_sort(SortedIterType start, SortedIterType end, ComparatorType comparator) {
 		if(end - start < 0) {
 			throw std::invalid_argument("Start and end don't create a valid range");
 		}
@@ -26,17 +26,13 @@ namespace Algorithms {
 			SortedIterType minimum = head;
 
 			for (auto current = (head + 1); current != end; ++current) {
-				int difference = comparator(*minimum, *current);
-
-				if (difference > 0) {
+				if (comparator(*current, *minimum) < 0) {
 					minimum = current;
 				}
 			}
 
 			// swap two values
-			auto tmp = *head;
-			*head = *minimum;
-			*minimum = tmp;
+			Algorithms::swap_iterators(head, minimum);
 
 			// advance head forward
 			++head;
