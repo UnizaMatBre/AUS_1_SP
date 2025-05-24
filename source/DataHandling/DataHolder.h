@@ -1,8 +1,13 @@
 #ifndef DATAHOLDER_H
 #define DATAHOLDER_H
 
-#include <fstream>
-#include "TownData.h"
+#include <string>
+
+#include "../Containers/NodeBasedTree.h"
+#include "../Containers/LinkedTable.h"
+
+#include "LandUnitData.h"
+#include "../Containers/LinkedListTree.h"
 
 
 namespace DataHandling {
@@ -34,6 +39,21 @@ namespace DataHandling {
 		};
 	}
 	*/
+
+	class DataHolder {
+		// table for each level of land unit
+		Containers::LinkedTable<std::string, LandUnitData> geographic_areas_table_;
+		Containers::LinkedTable<std::string, LandUnitData> republics_table_;
+		Containers::LinkedTable<std::string, LandUnitData> regions_table_;
+		Containers::LinkedTable<std::string, LandUnitData> towns_table_;
+
+		// highest territorial unit - great austrian repulic itself.
+		DataHandling::LandUnitData austria_unit_ = {"Rakúsko", "<AT>", 0};
+
+		// root of hierarchy
+		Containers::LinkedListTree<LandUnitData*> root_Node_ = {&austria_unit_};
+
+	};
 }
 
 #endif //DATAHOLDER_H
