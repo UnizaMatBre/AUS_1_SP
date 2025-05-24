@@ -110,7 +110,7 @@ namespace Containers {
 			ItemType* position_;
 
 		public:
-			using iterator_category = std::forward_iterator_tag;
+			using iterator_category = std::bidirectional_iterator_tag;
 
 			using value_type = ItemType;
 			using pointer = ItemType*;
@@ -134,10 +134,24 @@ namespace Containers {
 				return *this;
 			}
 
-			Iterator& operator++(int) {
+			Iterator operator++(int) {
 				auto old = *this;
 
 				++(*this);
+
+				return old;
+			}
+
+			Iterator& operator--() {
+				--this->position_;
+
+				return *this;
+			}
+
+			Iterator operator--(int) {
+				auto old = *this;
+
+				--(*this);
 
 				return old;
 			}
