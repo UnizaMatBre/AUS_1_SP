@@ -31,7 +31,6 @@ namespace Containers {
 			if (node != nullptr) {
 				this->finishNode_(node->next);
 
-				std::allocator_traits<ItemAllocatorType>::destroy(this->itemAllocator_, node->value);
 				std::allocator_traits<NodeAllocatorType>::destroy(this->nodeAllocator_, node);
 				std::allocator_traits<NodeAllocatorType>::deallocate(this->nodeAllocator_, node, 1);
 			}
