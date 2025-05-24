@@ -139,7 +139,7 @@ namespace Containers {
 
 			for (int counter = 0; counter < index; ++counter) {
 				if (current == nullptr) {
-					throw std::out_of_range();
+					throw std::out_of_range("Index out of range.");
 				}
 				current = current->next;
 			}
