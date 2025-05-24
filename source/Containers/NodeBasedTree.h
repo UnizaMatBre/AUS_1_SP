@@ -3,6 +3,8 @@
 
 #include <memory>
 
+#include "LinkedList.h"
+
 namespace Containers {
 	/**
 	 * Represents singular tree node.
@@ -70,6 +72,66 @@ namespace Containers {
 		}
 
 
+
+
+		class Iterator {
+			MyType* position_;
+			Containers::LinkedList<MyType*, AllocatorType> queue_;
+
+
+		public:
+			using iterator_category = std::bidirectional_iterator_tag;
+
+			using value_type = ItemType;
+			using pointer = ItemType*;
+			using reference = ItemType&;
+			using difference_type = std::ptrdiff_t;
+
+
+			Iterator(MyType* position, const AllocatorType& allocator) : position_(position), queue_(allocator) {}
+
+
+			reference operator*() {
+				return this->position_->item_;
+			};
+
+			pointer operator->() {
+				return &this->position_->item_;
+			};
+
+			Iterator& operator++() {
+				if (this->position_ == nullptr) {
+					return *this;
+				}
+
+				// has current node any children?
+				if (this->position_->get_children() != nullptr) {
+					// true: put that children for later search
+					this->queue_.push_back(this->position_->get_children());
+				};
+
+				// has current node siblings after it?
+				if (this->position_->sibling_ != nullptr) {
+					// true: move to sibling
+					this->position_ = this->position_->sibling_;
+				}
+				else {
+					// false: check if queue is empty
+					if (this->queue_.empty()) {
+						// true: we are finished
+						this->position_ = nullptr;
+					}
+					else {
+						// false: move to top of queue
+						this->position_ = this->queue_[0];
+						this->queue_.pull_front();
+					};
+				};
+				return *this;
+			};
+
+
+		};
 
 	};
 
