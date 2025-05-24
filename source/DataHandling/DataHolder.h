@@ -7,7 +7,7 @@
 #include "../Containers/LinkedTable.h"
 
 #include "LandUnitData.h"
-#include "../Containers/LinkedListTree.h"
+#include "../Containers/NodeBasedTree.h"
 
 
 namespace DataHandling {
@@ -50,8 +50,11 @@ namespace DataHandling {
 		// highest territorial unit - great austrian repulic itself.
 		DataHandling::LandUnitData austria_unit_ = {"Rakúsko", "<AT>", 0};
 
+		// node type
+		using LandNodeType = Containers::TreeNode<LandUnitData*>;
+
 		// root of hierarchy
-		Containers::LinkedListTree<LandUnitData*> root_Node_ = {&austria_unit_};
+		LandNodeType root_node_ = LandNodeType(&austria_unit_);
 	public:
 		DataHolder();
 
