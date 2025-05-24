@@ -3,6 +3,8 @@
 
 #include <memory>
 
+#include "LinkedList.h"
+
 
 namespace Containers {
 	template <typename ItemType, typename AllocatorType = std::allocator<ItemType>>
@@ -79,6 +81,80 @@ namespace Containers {
 			this.finalizeNode_(this->root_);
 			this->root_ = nullptr;
 		}
+
+
+		class Iterator {
+			Node* position_;
+			LinkedListTree& myTree_;
+
+			// NOTE: having std::list here is probably not allowed. Good think i made custom one
+			// "but it doesn't take allocator from Tree" ssshhh
+			Containers::LinkedList<Node*> queue_;
+		public:
+			using value_type		= ItemType;
+			using pointer			= ItemType*;
+			using reference			= ItemType&;
+			using difference_type	= std::ptrdiff_t;
+
+			Iterator(Node* position, LinkedListTree& myTree) : position_(position), myTree_(myTree) {};
+
+			reference operator*() {
+				return this->position_->value;
+			};
+
+			pointer operator->() {
+				return &this->position_->value;
+			};
+
+			/**
+			* Moves to next element using breadth-first search
+			*/
+			Iterator& operator++() {
+				// position is empty?
+				if (this->position_ == nullptr) {
+					return *this;
+				};
+
+				// has current node any children?
+				if (this->position_->children != nullptr) {
+					// true: put that children for later search
+					this->queue_.push_back(this->position_->children);
+				};
+
+				// has current node siblings?
+				if (this->position_->sibling != nullptr) {
+					// true: move to sibling
+					this->position_ = this->position_->sibling;
+				};
+				else {
+					// false: check if queue is empty
+					if (this->queue_.empty()) {
+						// true: we are finished
+						this->position_ = nullptr;
+					}
+					else {
+						// false: move to top of queue
+						this->position_ = this->queue_.front();
+						this->queue_.pop_front();
+					};
+				};
+				return *this;
+			};
+
+			Iterator operator++(int) {
+				Iterator tmp = *this;
+				++*this;
+				return tmp;
+			};
+
+
+			bool operator==(const Iterator& other) const {
+				return this->position_ == other.position_;
+			};
+			bool operator!=(const Iterator& other) const {
+				return this->position_ != other.position_;
+			};
+		};
 
 	};
 
