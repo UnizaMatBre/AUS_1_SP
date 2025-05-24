@@ -29,7 +29,7 @@ namespace DataHandling {
 			return this->identifier_;
 		};
 
-		int get_territory_level() const {
+		int get_unit_level() const {
 			return this->territory;
 		}
 

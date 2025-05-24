@@ -24,3 +24,9 @@ Algorithms::HasMinResidents Algorithms::HasMinResidents::InYear(const size_t yea
 bool Algorithms::HasMinResidents::operator()(const DataHandling::LandUnitData& landUnitData) const {
 	return landUnitData.get_total_population_at(this->index_) >= this->limit_;
 }
+
+
+
+bool Algorithms::UnitLevelIs::operator()(const DataHandling::LandUnitData& landUnitData) const {
+	return landUnitData.get_unit_level() == this->requested_unit_level_;
+}
