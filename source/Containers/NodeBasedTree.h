@@ -39,6 +39,24 @@ namespace Containers {
 		}
 
 
+		void push_back_children(ItemType& item) {
+			MyType* newNode = std::allocator_traits<NodeAllocatorType>::allocate(this->nodeAllocator_, 1);
+			std::allocator_traits<NodeAllocatorType>::construct(this->nodeAllocator_, newNode, item);
+
+			// has no children? Then this is our first one
+			if (this->children_ == nullptr) {
+				this->children_ = newNode;
+				return;
+			};
+
+			// has children? Go to the end and append it there
+			MyType* currentChildren = this->children_;
+			while (currentChildren->sibling_ != nullptr) {
+				currentChildren = currentChildren->sibling_;
+			}
+			currentChildren->sibling_ = newNode;
+		}
+
 		TreeNode* get_parent() const {
 			return this->parent_;
 		}
