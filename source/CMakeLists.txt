@@ -14,6 +14,7 @@ add_executable(main_app
 
         DataHandling/LandUnitData.h
         DataHandling/DataHolder.h
+        DataHandling/DataHolder.cpp
 
 
         Containers/ArrayList.h
