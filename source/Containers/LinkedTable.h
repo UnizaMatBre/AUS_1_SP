@@ -70,15 +70,15 @@ namespace Containers {
 		 *
 		 * \param key : unique identifier of pair
 		 * \param value : value stored in pair
-		 * \return true : if key/value were successfully inserted
-		 * \return false : if same key already exists in table
+		 * \return newNode : if key/value were successfully inserted
+		 * \return nullptr : if same key already exists in table
 		 */
-		bool insert_(const KeyType& key, const ValueType& value) {
+		Node* insert_(const KeyType& key, const ValueType& value) {
 			auto result = this->findNode_(key);
 
 			// node does already? Return false
 			if (result.first) {
-				return false;
+				return nullptr;
 			}
 
 			// node doesn't exist? Create it and return true
@@ -91,7 +91,7 @@ namespace Containers {
 
 			++this->itemCount_;
 
-			return true;
+			return newNode;
 		}
 
 		/**
@@ -227,12 +227,19 @@ namespace Containers {
 		 *
 		 * \param key : unique identifier of pair
 		 * \param value : value stored in pair
-		 * \return true : if key/value were successfully inserted
-		 * \return false : if same key already exists in table
+		 * \return value : inserted into tbe table
+		 * \throw std::out_of_range : insertion failed because key already exists
 		 */
-		bool insert(const KeyType& key, const ValueType& value) {
+		ValueType& insert(const KeyType& key, const ValueType& value) {
 			this->resolveFullness_();
-			return this->insert_(key, value);
+			auto result = this->insert_(key, value);
+
+			if (result == nullptr) {
+				// TODO: Is this good error?
+				throw std::out_of_range("Key already exists.");
+			}
+
+			return result->value();
 		};
 
 
