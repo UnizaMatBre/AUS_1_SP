@@ -131,6 +131,16 @@ namespace Containers {
 		}
 
 
+		/**
+		 * Checks if list is empty.
+		 *
+		 * @return true if there are no items, false otherwise
+		 */
+		bool empty() {
+			return this->front_ == nullptr;
+		}
+
+
 
 		/**
 		* Returns constant reference to item at specified index. Doesn't perform bound checking.
