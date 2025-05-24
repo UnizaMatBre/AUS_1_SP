@@ -42,7 +42,6 @@ namespace Containers {
 			this->finalizeNode_(node->sibling);
 			node->sibling = nullptr;
 
-			std::allocator_traits<ItemAllocatorType>::destroy(itemAllocator_, node->value);
 			std::allocator_traits<NodeAllocatorType>::destroy(this->nodeAllocator_, node);
 			std::allocator_traits<NodeAllocatorType>::deallocate(this->nodeAllocator_, node);
 
