@@ -54,12 +54,7 @@ namespace Containers {
 		 * Destroys linked list
 		 */
 		~LinkedList() {
-			if (this->front_ != nullptr) {
-				this->finishNode_(this->front_);
-				this->front_ = nullptr;
-			}
-
-			this->back_ = nullptr;
+			this->clear();
 		}
 
 		/**
@@ -105,6 +100,16 @@ namespace Containers {
 			std::allocator_traits<NodeAllocatorType>::destroy(this->nodeAllocator_, tobeDeleted);
 			std::allocator_traits<NodeAllocatorType>::deallocate(this->nodeAllocator_, tobeDeleted, 1);
 		}
+
+
+		void clear() {
+			this->finishNode_(this->front_);
+
+			this->front_ = nullptr;
+			this->back_ = nullptr;
+		}
+
+
 
 		/**
 		* Returns constant reference to item at specified index. Doesn't perform bound checking.
