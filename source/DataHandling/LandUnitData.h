@@ -33,6 +33,18 @@ namespace DataHandling {
 			return this->territory;
 		}
 
+		int get_male_population_at(const size_t index) const {
+			return this->male_population_count_[index];
+		}
+
+		int get_female_population_at(const size_t index) const {
+			return this->female_population_count_[index];
+		}
+
+		int get_total_population_at(const size_t index) const {
+			return this->male_population_count_[index] + this->female_population_count_[index];
+		}
+
 	};
 }
 
