@@ -5,6 +5,8 @@ add_executable(main_app
         Algorithms/Sorting.h
         Algorithms/Predicates.h
         Algorithms/Predicates.cpp
+        Algorithms/Comparators.h
+        Algorithms/Comparators.cpp
         Algorithms/Itertools.h
 
         DataHandling/TownData.cpp
