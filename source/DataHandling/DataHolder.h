@@ -6,6 +6,7 @@
 
 
 namespace DataHandling {
+	/*
 	template<class OutputIterType>
 	void loadTowns(OutputIterType targetCurent) {
 		std::ifstream streams[] = {
@@ -32,6 +33,7 @@ namespace DataHandling {
 			++targetCurent;
 		};
 	}
+	*/
 }
 
 #endif //DATAHOLDER_H
