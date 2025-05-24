@@ -1,0 +1,4 @@
+#ifndef NODEBASEDTREE_H
+#define NODEBASEDTREE_H
+
+#endif //NODEBASEDTREE_H
