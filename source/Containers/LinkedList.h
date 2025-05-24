@@ -63,6 +63,49 @@ namespace Containers {
 			this->back_ = nullptr;
 		}
 
+		/**
+		 * Insert item to the back of list.
+		 *
+		 * @param value item to be inserted
+		 */
+		void push_back(const ItemType& value) {
+			// create new node
+			Node* newNode = std::allocator_traits<NodeAllocatorType>::allocate(this->nodeAllocator_, 1);
+			std::allocator_traits<NodeAllocatorType>::construct(this->nodeAllocator_, newNode, value);
+
+			if (this->front_ == nullptr) {
+				this->front_ = newNode;
+				this->back_ = newNode;
+			}
+			else {
+				this->back_->next = newNode;
+				this->back_ = newNode;
+			}
+		}
+
+		/**
+		 *	Removes item from the fron of the list. Throws error if list is empty
+		 *
+		 *	\throw std::out_of_range : list is empty
+		 */
+		void pull_front() {
+			if (this->front_ == nullptr) {
+				throw std::out_of_range("Cannot pull from empty list.");
+			}
+
+			Node* tobeDeleted = this->front_;
+
+			if (this->front_ == this->back_) {
+				this->front_ = nullptr;
+				this->back_ = nullptr;
+			}
+			else {
+				this->front_ = this->front_->next;
+			}
+
+			std::allocator_traits<NodeAllocatorType>::destroy(this->nodeAllocator_, tobeDeleted);
+			std::allocator_traits<NodeAllocatorType>::deallocate(this->nodeAllocator_, tobeDeleted, 1);
+		}
 
 		/**
 		* Returns constant reference to item at specified index. Doesn't perform bound checking.
