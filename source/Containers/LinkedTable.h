@@ -73,7 +73,7 @@ namespace Containers {
 		 * \return true : if key/value were successfully inserted
 		 * \return false : if same key already exists in table
 		 */
-		bool insert_(const KeyType& key, ValueType& value) {
+		bool insert_(const KeyType& key, const ValueType& value) {
 			auto result = this->findNode_(key);
 
 			// node does already? Return false
@@ -230,7 +230,7 @@ namespace Containers {
 		 * \return true : if key/value were successfully inserted
 		 * \return false : if same key already exists in table
 		 */
-		bool insert(const KeyType& key, ValueType& value) {
+		bool insert(const KeyType& key, const ValueType& value) {
 			this->resolveFullness_();
 			return this->insert_(key, value);
 		};
