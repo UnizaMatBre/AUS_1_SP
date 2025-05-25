@@ -1,6 +1,0 @@
-#ifndef CONSOLESELECTOR_H
-#define CONSOLESELECTOR_H
-
-
-
-#endif //CONSOLESELECTOR_H

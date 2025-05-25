@@ -3,7 +3,6 @@ add_executable(main_app
 
         ConsoleEnvironment.h
         ConsoleEnvironment.cpp
-        ConsoleSelector.h
 
         Algorithms/Querying.h
         Algorithms/Sorting.h
