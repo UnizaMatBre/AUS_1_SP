@@ -45,6 +45,9 @@ namespace Containers {
 			MyType* newNode = std::allocator_traits<NodeAllocatorType>::allocate(this->nodeAllocator_, 1);
 			std::allocator_traits<NodeAllocatorType>::construct(this->nodeAllocator_, newNode, item);
 
+			// store myself as parent of the node
+			newNode->parent_ = this;
+
 			// has no children? Then this is our first one
 			if (this->children_ == nullptr) {
 				this->children_ = newNode;
