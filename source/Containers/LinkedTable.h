@@ -46,6 +46,21 @@ namespace Containers {
 		size_t itemCount_ = 0;
 
 
+
+
+		void finalize_node_(Node* node) {
+			std::allocator_traits<NodeAllocatorType>::destroy(this->nodeAllocator_, node);
+			std::allocator_traits<NodeAllocatorType>::deallocate(this->nodeListAllocator_, node, 1);
+		};
+
+		void finalize_node_chain_(Node* node) {
+			if (node == nullptr) { return; }
+			this->finalize_node_(node->next);
+
+			std::allocator_traits<NodeAllocatorType>::destroy(this->nodeAllocator_, node);
+			std::allocator_traits<NodeAllocatorType>::deallocate(this->nodeAllocator_, node, 1);
+		}
+
 	public:
 		LinkedTable(): nodeAllocator_(), nodeListAllocator_(this->nodeAllocator_) {};
 
@@ -56,7 +71,18 @@ namespace Containers {
 		};
 
 		~LinkedTable() {
-			throw std::runtime_error("Not implemented.");
+			if (this->buckets_ == nullptr) {
+				return;
+			}
+
+			for (size_t index = 0; index < this->capacity_; ++index) {
+				if (this->buckets_[index] != nullptr) {
+					this->finalize_node_chain_(this->buckets_[index]);
+				}
+			}
+			std::allocator_traits<NodeListAllocatorType>::deallocate(this->nodeListAllocator_, this->buckets_, this->capacity_);
+			this->capacity_ = 0;
+			this->itemCount_ = 0;
 		};
 
 		ValueType& insert(const KeyType& key, const ValueType& value) {
