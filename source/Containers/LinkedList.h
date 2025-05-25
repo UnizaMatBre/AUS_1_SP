@@ -185,9 +185,62 @@ namespace Containers {
 			return current->value;
 		}
 
+		class Iterator {
+			Node* position_;
+
+		public:
+			using iterator_category = std::bidirectional_iterator_tag;
+
+			using value_type = ItemType;
+			using pointer = ItemType*;
+			using reference = ItemType&;
+			using difference_type = std::ptrdiff_t;
+
+
+			Iterator(Node* node) : position_(node) {};
+
+			reference operator*() const {
+				return *this->position_->value;
+			}
+
+			pointer operator->() {
+				return this->position_->value;
+			}
+
+			Iterator& operator++() {
+				this->position_ = this->position_->next;
+
+				return *this;
+			}
+
+			Iterator operator++(int) {
+				auto old = *this;
+
+				++(*this);
+
+				return old;
+			};
+
+			bool operator==(const Iterator& other) {
+				return this->position_ == other.position_;
+			}
+
+			bool operator!=(const Iterator& other) {
+				return this->position_ != other.position_;
+			}
+		};
+
+
+		Iterator begin() {
+			return Iterator(this->front_);
+		};
+		Iterator end() {
+			return Iterator(nullptr);
+		};
+
+
 
 	};
-
 };
 
 
