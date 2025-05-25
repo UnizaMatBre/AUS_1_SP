@@ -25,8 +25,8 @@ namespace Containers {
 			ItemType item;
 
 			Node(const ItemType& item) : item(item) {};
-			KeyType& key() const { return item.first; }
-			ValueType& value() const { return item.second; }
+			const KeyType& key() const { return item.first; }
+			ValueType& value() { return item.second; }
 		};
 
 		using NodeAllocatorType = typename std::allocator_traits<AllocatorType>::template rebind_alloc<Node>;
@@ -46,11 +46,84 @@ namespace Containers {
 		size_t itemCount_ = 0;
 
 
+		/**
+		* Checks if table is too full and expands it if needed
+		* NOTE: We actually don't need to destroy old nodes - we can reuse them with new buckets
+		*/
+		void resolve_fullness_() {
+			// we will resize ONLY if item count is at least 80% of capacity
+			if (this->itemCount_ < static_cast<size_t>(this->capacity_ * 0.8)) {
+				return;
+			}
 
+			// store old internals
+			Node** oldBuckets = this->buckets_;
+			size_t oldCapacity = this->capacity_;
+
+			// create new internals
+			this->itemCount_ = 0;
+			this->capacity_ = (oldCapacity == 0) ? 8 : (oldCapacity * 2);
+			this->buckets_ = std::allocator_traits<NodeListAllocatorType>::allocate(this->nodeListAllocator_, this->capacity_);
+
+			// initialize new buckets into null (just in case)
+			for (size_t index = 0; index < this->capacity_; ++index) {
+				this->buckets_[index] = nullptr;
+			}
+
+			// insert any values from old buckets and destroys them afterward
+			for (size_t index = 0; index < oldCapacity; ++index) {
+				Node* current_node = oldBuckets[index];
+
+				while (current_node != nullptr) {
+					auto next_node = current_node->next;
+
+					// find nice new place for node in new buckets
+					auto find_location = this->find_node_(current_node->key()).second;
+
+					current_node->next = *find_location;
+					*find_location = current_node;
+
+					++this->itemCount_;
+
+					current_node = next_node;
+				};
+
+				oldBuckets[index] = nullptr;
+			};
+
+			// deallocate the old bucket array
+			std::allocator_traits<NodeListAllocatorType>::deallocate(this->nodeListAllocator_, oldBuckets, oldCapacity);
+		};
+
+		/**
+		 * Searches for node with same key as passed one. DOESN'T CHECK IF BUCKETS ARE EMPTY
+		 *
+		 * @param key key we are looking for
+		 * @return <true, Node**> when node is found - Node** points to said node
+		 * @return <false, Node**> when node is not found - Node** points to place where new node can be inserted
+		 */
+		std::pair<bool, Node**> find_node_(const KeyType& key) {
+			size_t index = this->keyHash_(key) % this->capacity_;
+
+			Node* activeNode = this->buckets_[index];
+
+			// if bucket node is not null, we need to check nodes there
+			if (activeNode != nullptr) {
+				while (activeNode != nullptr) {
+					if (this->keyEqual_(key, activeNode->key())) {
+						return std::make_pair(true, &activeNode);
+					}
+					activeNode = activeNode->next;
+				}
+			}
+
+			// either bucket is null or no node had key we wanted
+			return std::make_pair(false, this->buckets_ + index );
+		}
 
 		void finalize_node_(Node* node) {
 			std::allocator_traits<NodeAllocatorType>::destroy(this->nodeAllocator_, node);
-			std::allocator_traits<NodeAllocatorType>::deallocate(this->nodeListAllocator_, node, 1);
+			std::allocator_traits<NodeAllocatorType>::deallocate(this->nodeAllocator_, node, 1);
 		};
 
 		void finalize_node_chain_(Node* node) {
@@ -86,15 +159,40 @@ namespace Containers {
 		};
 
 		ValueType& insert(const KeyType& key, const ValueType& value) {
-			throw std::runtime_error("Not implemented.");
+			this->resolve_fullness_();
+
+			auto find_result = this->find_node_(key);
+			if (find_result.first) {
+				throw std::out_of_range("Key already exists.");
+			}
+
+			Node* new_node = std::allocator_traits<NodeAllocatorType>::allocate(this->nodeAllocator_, 1);
+			std::allocator_traits<NodeAllocatorType>::construct(this->nodeAllocator_, new_node, std::make_pair(key, value));
+
+			new_node->next = *(find_result.second);
+			*find_result.second = new_node;
+
+			++this->itemCount_;
+
+			return new_node->value();
 		};
 
 		ValueType& at(const KeyType& key) {
-			throw std::runtime_error("Not implemented.");
+			auto find_result = this->find_node_(key);
+			if (not find_result.first) {
+				throw std::out_of_range("Key doesn't exists.");
+			}
+
+			return (*find_result.second)->value();
 		};
 
 		ValueType& at(const KeyType& key) const {
-			throw std::runtime_error("Not implemented.");
+			auto find_result = this->find_node_(key);
+			if (not find_result.first) {
+				throw std::out_of_range("Key doesn't exists.");
+			}
+
+			return (*find_result.second)->value();
 		};
 
 
