@@ -186,6 +186,7 @@ namespace Containers {
 		}
 
 		class Iterator {
+			size_t index_;
 			Node* position_;
 
 		public:
@@ -197,7 +198,7 @@ namespace Containers {
 			using difference_type = std::ptrdiff_t;
 
 
-			Iterator(Node* node) : position_(node) {};
+			Iterator(Node* node, size_t index) : position_(node), index_(index) {};
 
 			reference operator*() const {
 				return this->position_->value;
@@ -209,6 +210,7 @@ namespace Containers {
 
 			Iterator& operator++() {
 				this->position_ = this->position_->next;
+				++this->index_;
 
 				return *this;
 			}
@@ -221,6 +223,27 @@ namespace Containers {
 				return old;
 			};
 
+			Iterator operator+(int value) {
+				Iterator tmp = *this;
+
+				for (int counter = 0; counter < value; ++counter) {
+					tmp.position_ = tmp.position_->next;
+					++tmp.index_;
+				}
+
+				return tmp;
+			}
+
+			bool operator<(const Iterator& other) const {
+				return this->index_ < other.index_;
+			}
+
+			bool operator<=(const Iterator& other) const {
+				return this->index_ <= other.index_;
+			}
+
+
+
 			bool operator==(const Iterator& other) {
 				return this->position_ == other.position_;
 			}
@@ -232,10 +255,20 @@ namespace Containers {
 
 
 		Iterator begin() {
-			return Iterator(this->front_);
+			return Iterator(this->front_, 0);
 		};
+
 		Iterator end() {
-			return Iterator(nullptr);
+			size_t index = 0;
+			Node* current = this->front_;
+			while (current != nullptr) {
+				++index;
+				current = current->next;
+			};
+
+
+
+			return Iterator(nullptr, index);
 		};
 
 
