@@ -13,6 +13,10 @@ namespace Algorithms {
 	public:
 		explicit ContainsSubstringInName(const std::string& substring) : substring_(substring) {}
 		bool operator()(DataHandling::LandUnitData& landUnitData) const;
+
+		bool operator()(DataHandling::LandUnitData* landUnitData) const {
+			return this->operator()(*landUnitData);
+		};
 	};
 
 
@@ -26,6 +30,10 @@ namespace Algorithms {
 
 		explicit HasMaxResidents(const size_t index, const int limit) : index_(index), limit_(limit) {}
 		bool operator()(const DataHandling::LandUnitData& landUnitData) const;
+
+		bool operator()(DataHandling::LandUnitData* landUnitData) const {
+			return this->operator()(*landUnitData);
+		};
 	};
 
 
@@ -39,6 +47,10 @@ namespace Algorithms {
 
 		explicit HasMinResidents(const size_t index, const int limit) : index_(index), limit_(limit) {}
 		bool operator()(const DataHandling::LandUnitData& landUnitData) const;
+
+		bool operator()(DataHandling::LandUnitData* landUnitData) const {
+			return this->operator()(*landUnitData);
+		};
 	};
 
 
@@ -49,6 +61,10 @@ namespace Algorithms {
 	public:
 		explicit UnitLevelIs(const int requested_unit_level) : requested_unit_level_(requested_unit_level) {}
 		bool operator()(const DataHandling::LandUnitData& landUnitData) const;
+
+		bool operator()(DataHandling::LandUnitData* landUnitData) const {
+			return this->operator()(*landUnitData);
+		};
 	};
 }
 
