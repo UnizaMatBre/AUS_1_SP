@@ -45,7 +45,7 @@ namespace DataHandling {
 		Containers::LinkedTable<std::string, LandUnitData*> geographic_areas_table_;
 		Containers::LinkedTable<std::string, LandUnitData*> republics_table_;
 		Containers::LinkedTable<std::string, LandUnitData*> regions_table_;
-		Containers::LinkedTable<std::string, LandUnitData*> towns_table_;
+		Containers::LinkedTable<std::string, Containers::LinkedList<LandUnitData*>> towns_table_;
 
 		// sequence of every single land unit
 		Containers::LinkedList<LandUnitData> land_units_list_;

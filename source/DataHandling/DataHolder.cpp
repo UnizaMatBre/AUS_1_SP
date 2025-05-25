@@ -118,8 +118,15 @@ DataHandling::DataHolder::DataHolder() {
 			auto new_land_node_ptr =  parent_node_ptr->push_back_children(new_land_unit_ptr);
 
 			// insert unit into table
-			this->towns_table_.insert(name, new_land_unit_ptr);
+			auto list = Containers::LinkedList<LandUnitData*>();
+			list.push_back(new_land_unit_ptr);
 
+			try {
+				this->towns_table_.insert(name, list);
+			}
+			catch (std::out_of_range& e) {
+				this->towns_table_.at(name).push_back(new_land_unit_ptr);
+			}
 			// insert land node into mapper
 			id_to_node_mapper.insert(restricted_id, new_land_node_ptr);
 		};
