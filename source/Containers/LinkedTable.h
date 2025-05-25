@@ -78,10 +78,10 @@ namespace Containers {
 					auto next_node = current_node->next;
 
 					// find nice new place for node in new buckets
-					auto find_location = this->find_node_(current_node->key()).second;
+					auto new_location_index = this->find_node_(current_node->key()).first;
 
-					current_node->next = *find_location;
-					*find_location = current_node;
+					current_node->next = this->buckets_[new_location_index];
+					this->buckets_[new_location_index] = current_node;
 
 					++this->itemCount_;
 
@@ -99,10 +99,10 @@ namespace Containers {
 		 * Searches for node with same key as passed one. DOESN'T CHECK IF BUCKETS ARE EMPTY
 		 *
 		 * @param key key we are looking for
-		 * @return <true, Node**> when node is found - Node** points to said node
-		 * @return <false, Node**> when node is not found - Node** points to place where new node can be inserted
+		 * @return <0, Node*> when node is found - Node* point at it
+		 * @return <index, nullptr> when node is not found - index specified best bucket to insert new node
 		 */
-		std::pair<bool, Node**> find_node_(const KeyType& key) {
+		std::pair<int, Node*> find_node_(const KeyType& key) {
 			size_t index = this->keyHash_(key) % this->capacity_;
 
 			Node* activeNode = this->buckets_[index];
@@ -111,14 +111,14 @@ namespace Containers {
 			if (activeNode != nullptr) {
 				while (activeNode != nullptr) {
 					if (this->keyEqual_(key, activeNode->key())) {
-						return std::make_pair(true, &activeNode);
+						return std::make_pair(0, activeNode);
 					}
 					activeNode = activeNode->next;
 				}
 			}
 
 			// either bucket is null or no node had key we wanted
-			return std::make_pair(false, this->buckets_ + index );
+			return std::make_pair(index, nullptr );
 		}
 
 		void finalize_node_(Node* node) {
@@ -128,7 +128,7 @@ namespace Containers {
 
 		void finalize_node_chain_(Node* node) {
 			if (node == nullptr) { return; }
-			this->finalize_node_(node->next);
+			this->finalize_node_chain_(node->next);
 
 			std::allocator_traits<NodeAllocatorType>::destroy(this->nodeAllocator_, node);
 			std::allocator_traits<NodeAllocatorType>::deallocate(this->nodeAllocator_, node, 1);
@@ -162,15 +162,15 @@ namespace Containers {
 			this->resolve_fullness_();
 
 			auto find_result = this->find_node_(key);
-			if (find_result.first) {
+			if (find_result.second != nullptr) {
 				throw std::out_of_range("Key already exists.");
 			}
 
 			Node* new_node = std::allocator_traits<NodeAllocatorType>::allocate(this->nodeAllocator_, 1);
 			std::allocator_traits<NodeAllocatorType>::construct(this->nodeAllocator_, new_node, std::make_pair(key, value));
 
-			new_node->next = *(find_result.second);
-			*find_result.second = new_node;
+			new_node->next = this->buckets_[find_result.first];
+			this->buckets_[find_result.first] = new_node;
 
 			++this->itemCount_;
 
@@ -179,20 +179,20 @@ namespace Containers {
 
 		ValueType& at(const KeyType& key) {
 			auto find_result = this->find_node_(key);
-			if (not find_result.first) {
+			if (find_result.second == nullptr) {
 				throw std::out_of_range("Key doesn't exists.");
 			}
 
-			return (*find_result.second)->value();
+			return find_result.second->value();
 		};
 
 		ValueType& at(const KeyType& key) const {
 			auto find_result = this->find_node_(key);
-			if (not find_result.first) {
+			if (find_result.second == nullptr) {
 				throw std::out_of_range("Key doesn't exists.");
 			}
 
-			return (*find_result.second)->value();
+			return find_result.second->value();
 		};
 
 
