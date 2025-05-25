@@ -78,7 +78,51 @@ DataHandling::DataHolder::DataHolder() {
 			// insert land node into mapper
 			id_to_node_mapper.insert(restricted_id, new_land_node_ptr);
 		}
-
 		stream.close();
 	};
+
+	{
+		// open stream
+		auto stream = std::ifstream(R"(../../data/obce.csv)");
+		std::string line;
+		if (not stream.is_open()) {
+			throw std::runtime_error("Could not open file");
+		};
+
+		// cycle over every line in file
+		while (std::getline(stream, line)) {
+			std::string name, full_id, restricted_id, restricted_parent_id;
+
+			// read data
+			DataHandling::CsvLineReader(line)
+				.handleField([&name](const std::string& field ) {
+					name = field;
+				})
+				->handleField([&full_id, &restricted_id](const std::string& field ) {
+					full_id = field;
+					restricted_id = field.substr(1, field.size() - 2);
+				})
+				->handleField([&restricted_parent_id](const std::string& field ) {
+					restricted_parent_id = field.substr(0, field.size() - 1);
+				});
+
+			// get parent node
+			auto parent_node_ptr = id_to_node_mapper.at(restricted_parent_id);
+
+			// create new land unit
+			auto new_land_unit_ptr = &this->land_units_list_.push_back(
+				{name, full_id, parent_node_ptr->get_item()->get_unit_level() + 1}
+			);
+
+			// create new tree node
+			auto new_land_node_ptr =  parent_node_ptr->push_back_children(new_land_unit_ptr);
+
+			// insert unit into table
+			this->towns_table_.insert(name, new_land_unit_ptr);
+
+			// insert land node into mapper
+			id_to_node_mapper.insert(restricted_id, new_land_node_ptr);
+		};
+	};
+
 }
