@@ -140,10 +140,44 @@ void show_selection_submenu(TreeIterator& begin, TreeIterator& end) {
 	}
 
 
-	std::cout << "Vysledok" << std::endl;
+	std::cout << "Chcete zoradiť vysledok [1 ak ano] [0 ak nie]?" << std::endl;
+	choice = request_choice_input({0,1});
+	if (choice == 0) {
+		std::cout << "Vysledok:" << std::endl;
+		for (auto item : output_list) {
+			print_land_unit(item);
+		}
+		return;
+	}
+
+	std::cout << "Vyberte komparator:" << std::endl;
+	std::cout << "[0] compareAlphabetical - porovnáva názvy abecedne." << std::endl;
+	std::cout << "[1] comparePopulation - porovnáva populáce podla roku a kategorie (muži, ženy, všetci)." << std::endl;
+
+	choice = request_choice_input({0,1});
+
+	switch (choice) {
+		case 0: {
+			Algorithms::quick_sort(output_list.begin(), output_list.end(), Algorithms::CompareAlphabetical());
+			break;
+		};
+		case 1: {
+			std::cout << "Zadaj rok [2020-2024]" << std::endl;
+			int year = request_choice_input({2020, 2021, 2022, 2023, 2024});
+
+			std::cout << "Zadaj kategoriu [0 - muži, 1 - ženy, 2 - všetci]:" << std::endl;
+			auto category = static_cast<Algorithms::ComparePopulation::Category>( request_choice_input({0,1,2}) );
+
+			Algorithms::quick_sort(output_list.begin(), output_list.end(), Algorithms::ComparePopulation::InYear(year, category));
+			break;
+		};
+	};
+	std::cout << "Vysledok:" << std::endl;
 	for (auto item : output_list) {
 		print_land_unit(item);
 	}
+
+
 };
 
 void ConsoleEnvironment::show_tree_menu() {
