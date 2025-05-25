@@ -57,19 +57,24 @@ namespace Containers {
 				return;
 			}
 
-			auto otherFirstNode = other.front_;
+			auto other_first_node = other.front_;
 
-			auto thisFirstNode = std::allocator_traits<NodeAllocatorType>::allocate(this->nodeAllocator_, 1);
-			std::allocator_traits<NodeAllocatorType>::construct(this->nodeAllocator_, thisFirstNode, otherFirstNode->value);
+			auto this_first_node = std::allocator_traits<NodeAllocatorType>::allocate(this->nodeAllocator_, 1);
+			std::allocator_traits<NodeAllocatorType>::construct(this->nodeAllocator_, this_first_node, other_first_node->value);
 
-			while (otherFirstNode->next != nullptr) {
-				otherFirstNode = otherFirstNode->next;
+			auto active_node = this_first_node;
 
-				thisFirstNode->next = std::allocator_traits<NodeAllocatorType>::allocate(this->nodeAllocator_, 1);
-				std::allocator_traits<NodeAllocatorType>::construct(this->nodeAllocator_, thisFirstNode->next, otherFirstNode->value);
+			while (other_first_node->next != nullptr) {
+				other_first_node = other_first_node->next;
 
-				thisFirstNode = thisFirstNode->next;
+				active_node->next = std::allocator_traits<NodeAllocatorType>::allocate(this->nodeAllocator_, 1);
+				std::allocator_traits<NodeAllocatorType>::construct(this->nodeAllocator_, active_node, other_first_node->value);
+
+				active_node = active_node->next;
 			};
+
+			this->front_ = this_first_node;
+			this->back_ = active_node;
 		};
 		/**
 		 * Destroys linked list
