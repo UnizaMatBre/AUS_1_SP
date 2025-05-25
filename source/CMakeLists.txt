@@ -18,7 +18,6 @@ add_executable(main_app
         Containers/LinkedList.h
         Containers/LinkedListTree.h
         Containers/NodeBasedTree.h
-        Containers/Table.h
         Containers/LinkedTable.h
 )
 
