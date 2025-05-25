@@ -47,13 +47,9 @@ namespace Containers {
 
 
 	public:
-		LinkedTable() {
-			throw std::runtime_error("Not implemented.");
-		};
+		LinkedTable(): nodeAllocator_(), nodeListAllocator_(this->nodeAllocator_) {};
 
-		LinkedTable(const AllocatorType& allocator) {
-			throw std::runtime_error("Not implemented.");
-		};
+		LinkedTable(const AllocatorType& allocator) : nodeAllocator_(allocator), nodeListAllocator_(this->nodeAllocator_) {};
 
 		LinkedTable(const LinkedTable<KeyType, ValueType, AllocatorType>& other) {
 			throw std::runtime_error("Not implemented.");
