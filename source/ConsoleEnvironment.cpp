@@ -206,8 +206,11 @@ void ConsoleEnvironment::show_tables_menu() {
 			std::cout << "Jednotka na danej úrovni z daným názvom neexistuje" << std::endl;
 		}
 
+		std::cout << "-------------------" << std::endl;
+
 		std::cout << std::endl;
-		std::cout << "Koniec? [0 ak ano]" << std::endl;
+		std::cout << "Koniec? [0 ak ano] [iná klávesa ak nie]" << std::endl;
+		std::cout << ":: ";
 		std::cin >> table_number;
 		if (table_number == 0) {
 			return;
