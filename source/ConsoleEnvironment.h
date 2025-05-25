@@ -7,6 +7,9 @@
 class ConsoleEnvironment {
 	DataHandling::DataHolder& holder_;
 
+
+	void show_tree_menu();
+
 public:
 	explicit ConsoleEnvironment(DataHandling::DataHolder& data_holder) : holder_(data_holder) {}
 

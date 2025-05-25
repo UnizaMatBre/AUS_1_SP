@@ -63,6 +63,10 @@ namespace DataHandling {
 	public:
 		DataHolder();
 
+		auto get_tree_iterator() {
+			return this->root_node_.begin();
+		}
+
 	};
 }
 
