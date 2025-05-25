@@ -153,6 +153,7 @@ void ConsoleEnvironment::show_tables_menu() {
 		std::cout << "Vyber level administrativnej jednotky (1-4)" << std::endl;
 		while (true) {
 			std::cout << ":: ";
+			std::cin.clear();
 			std::cin >> table_number;
 			std::cout << std::endl;
 
