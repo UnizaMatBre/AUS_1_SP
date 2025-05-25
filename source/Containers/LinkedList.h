@@ -239,6 +239,33 @@ namespace Containers {
 		};
 
 
+		class PushBackIterator {
+			const MyType& my_list_;
+
+		public:
+			explicit PushBackIterator(MyType& my_list) : my_list_(my_list) {};
+
+
+			PushBackIterator operator*() {
+				return *this;
+			};
+
+			PushBackIterator& operator++() {
+				return *this;
+			}
+
+			PushBackIterator& operator=(const ItemType& item) {
+				this->my_list_.push_back(item);
+
+				return *this;
+			}
+
+		};
+
+		PushBackIterator push_backer() {
+			return PushBackIterator(this);
+		}
+
 
 	};
 };
