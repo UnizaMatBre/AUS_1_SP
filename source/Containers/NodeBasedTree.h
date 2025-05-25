@@ -69,7 +69,7 @@ namespace Containers {
 			return this->children_;
 		}
 
-		ItemType& get_item() const {
+		ItemType& get_item() {
 			return this->item_;
 		}
 
