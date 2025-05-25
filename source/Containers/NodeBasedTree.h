@@ -172,7 +172,7 @@ namespace Containers {
 					return false;
 				};
 
-				auto current = this->position_;
+				auto current = this->position_->children_;
 
 				// iterate while current node isn't null
 				while (current != nullptr) {
@@ -183,7 +183,7 @@ namespace Containers {
 						return true;
 					}
 					// it isn't happy? Move to next sibling and try
-					current = current->sibling;
+					current = current->sibling_;
 				}
 
 				// we looked all siblings and selector was not happy with any of them
