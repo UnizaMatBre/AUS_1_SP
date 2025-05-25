@@ -9,9 +9,6 @@ add_executable(main_app
         Algorithms/Comparators.cpp
         Algorithms/Itertools.h
 
-        DataHandling/TownData.cpp
-        DataHandling/TownData.h
-
         DataHandling/LandUnitData.h
         DataHandling/DataHolder.h
         DataHandling/DataHolder.cpp
