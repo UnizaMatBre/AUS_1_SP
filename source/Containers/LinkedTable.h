@@ -2,7 +2,6 @@
 #define LINKEDTABLE_H
 #include <functional>
 #include <stdexcept>
-#include <bits/locale_facets_nonio.h>
 
 namespace Containers {
 	/**
@@ -19,6 +18,34 @@ namespace Containers {
 		typename AllocatorType = std::allocator<std::pair<const KeyType, ValueType>>
 	>
 	class LinkedTable {
+		using ItemType = std::pair<const KeyType, ValueType>;
+
+		struct Node {
+			Node* next = nullptr;
+			ItemType item;
+
+			Node(const ItemType& item) : item(item) {};
+			KeyType& key() const { return item.first; }
+			ValueType& value() const { return item.second; }
+		};
+
+		using NodeAllocatorType = typename std::allocator_traits<AllocatorType>::template rebind_alloc<Node>;
+		using NodeListAllocatorType = typename std::allocator_traits<AllocatorType>::template rebind_alloc<Node*>;
+
+		// allocators
+		NodeAllocatorType nodeAllocator_;
+		NodeListAllocatorType nodeListAllocator_;
+
+		// tools for key indexing and comparing
+		std::hash<KeyType> keyHash_;
+		std::equal_to<KeyType> keyEqual_;
+
+		// array of buckets and information about it
+		Node** buckets_ = nullptr;
+		size_t capacity_ = 0;
+		size_t itemCount_ = 0;
+
+
 	public:
 		LinkedTable() {
 			throw std::runtime_error("Not implemented.");
