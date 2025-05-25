@@ -7,20 +7,31 @@ int Algorithms::CompareAlphabetical::operator()(const DataHandling::LandUnitData
 };
 
 
-bool Algorithms::ComparePopulation::operator()(const DataHandling::LandUnitData& left, const DataHandling::LandUnitData& right) const {
+int Algorithms::ComparePopulation::operator()(const DataHandling::LandUnitData& left, const DataHandling::LandUnitData& right) const {
+	int left_int = -1;;
+	int right_int = -1;
+
 	switch (this->category_) {
 		case ComparePopulation::Category::Male: {
-			return left.male_population_at(this->index_) - right.male_population_at(this->index_);
+			left_int = left.male_population_at(this->index_);
+			right_int = right.male_population_at(this->index_);
+			break;
 		};
 
 		case ComparePopulation::Category::Female: {
-			return left.female_population_at(this->index_) - right.female_population_at(this->index_);
+			left_int = left.female_population_at(this->index_);
+			right_int = right.female_population_at(this->index_);
+			break;
 		};
 		case ComparePopulation::Category::Both: {
-			return left.get_total_population_at(this->index_) - right.get_total_population_at(this->index_);
+			left_int = left.get_total_population_at(this->index_);
+			right_int = right.get_total_population_at(this->index_);
+			break;
 		}
 		default: {
 			throw std::invalid_argument("Unexpected category.");
 		};
 	}
+
+	return left_int - right_int;
 }

@@ -34,9 +34,9 @@ namespace Algorithms {
 			return {2020 - year, category};
 		};
 		ComparePopulation(const size_t index, const Category category) : index_(index), category_(category) {};
-		bool operator()(const DataHandling::LandUnitData& left, const DataHandling::LandUnitData& right) const;
+		int operator()(const DataHandling::LandUnitData& left, const DataHandling::LandUnitData& right) const;
 
-		bool operator()(DataHandling::LandUnitData* left, DataHandling::LandUnitData* right) const {
+		int operator()(DataHandling::LandUnitData* left, DataHandling::LandUnitData* right) const {
 			return operator()(*left, *right);
 		}
 	};
