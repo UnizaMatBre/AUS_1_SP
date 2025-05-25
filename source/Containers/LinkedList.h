@@ -200,11 +200,11 @@ namespace Containers {
 			Iterator(Node* node) : position_(node) {};
 
 			reference operator*() const {
-				return *this->position_->value;
+				return this->position_->value;
 			}
 
 			pointer operator->() {
-				return this->position_->value;
+				return &this->position_->value;
 			}
 
 			Iterator& operator++() {
@@ -240,10 +240,10 @@ namespace Containers {
 
 
 		class PushBackIterator {
-			const MyType& my_list_;
+			MyType* my_list_;
 
 		public:
-			explicit PushBackIterator(MyType& my_list) : my_list_(my_list) {};
+			explicit PushBackIterator(MyType* my_list) : my_list_(my_list) {};
 
 
 			PushBackIterator operator*() {
@@ -255,7 +255,7 @@ namespace Containers {
 			}
 
 			PushBackIterator& operator=(const ItemType& item) {
-				this->my_list_.push_back(item);
+				this->my_list_->push_back(item);
 
 				return *this;
 			}
