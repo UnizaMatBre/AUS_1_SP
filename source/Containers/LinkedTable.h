@@ -245,31 +245,6 @@ namespace Containers {
 
 
 
-		ValueType& operator[](const KeyType& key) {
-			this->resolveFullness_();
-			auto result = this->findNode_(key);
-
-			// node exists? Return its value
-			if (result.first) {
-				return (*result.second)->value();
-			}
-
-			// node doesn't exist? Create it and return its value
-			Node* newNode = std::allocator_traits<NodeAllocatorType>::allocate(this->nodeAllocator_, 1);
-			std::allocator_traits<NodeAllocatorType>::construct(this->nodeAllocator_, newNode);
-
-			// THIS REQUIRES THAT VALUE TYPE HAS NON-PARAM CONSTRUCTOR
-			// IF IT DOESN'T, THEN IT IS YOUR FAULT YOU USE THIS UNSAFE METHOD
-			std::allocator_traits<ItemAllocatorType>::construct(this->itemAllocator_, newNode->itemPtr(), std::make_pair(key, {}));
-
-			auto previousFirst = *result.second;
-			*(result.second) = newNode;
-
-			return newNode->value();
-		}
-
-
-
 		ValueType& at(const KeyType& key) {
 			this->resolveFullness_();
 
