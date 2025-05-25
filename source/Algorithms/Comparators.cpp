@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-int Algorithms::CompareAlphabetical(const DataHandling::LandUnitData &left, const DataHandling::LandUnitData &right) {
+int Algorithms::CompareAlphabetical::operator()(const DataHandling::LandUnitData &left, const DataHandling::LandUnitData &right) const {
 	return left.get_name().compare(right.get_name());
 };
 

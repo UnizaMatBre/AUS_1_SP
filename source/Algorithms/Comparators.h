@@ -4,11 +4,19 @@
 #include "../DataHandling/LandUnitData.h"
 
 namespace Algorithms {
-	/**
-	 * Represents comparator that compares two units by their name alphabetically
-	 */
-	int CompareAlphabetical(const DataHandling::LandUnitData& left, const DataHandling::LandUnitData& right);
 
+
+	/**
+	* Represents comparator that compares two units by their name alphabetically
+	*/
+	class CompareAlphabetical {
+	public:
+		int operator()(const DataHandling::LandUnitData& left, const DataHandling::LandUnitData& right) const;
+
+		int operator()(const DataHandling::LandUnitData* left, const DataHandling::LandUnitData* right) {
+			return this->operator()(*left, *right);
+		};
+	};
 
 	/**
 	 * Represents comparator that compares two units by population in specific year.
