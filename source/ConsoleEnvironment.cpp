@@ -29,6 +29,9 @@ int request_choice_input(std::initializer_list<int> valid_choices) {
 		std::cout << ":: ";
 		std::cin >> choice;
 
+		if (valid_choices.size() == 0) {
+			return choice;
+		}
 		for (auto& one_valid_choice : valid_choices) {
 			if (choice == one_valid_choice) {
 				return one_valid_choice;
@@ -87,14 +90,59 @@ void show_selection_submenu(TreeIterator& begin, TreeIterator& end) {
 	std::cout << "[1] containsStr - nazov obsahuje zadaný retazec." << std::endl;
 	std::cout << "[2] hasMaxResidents - v zadanom roku ma menej občanov ako limit" << std::endl;
 	std::cout << "[3] hasMinResidents - v zadanom roku ma menej občanov ako limit"  << std::endl;
+	std::cout << "[4] hasType - administrativny level je rovnaký ako zadané čislo"  << std::endl;
 
-	while (true) {
-		std::cout << std::endl;
-		std::cout << ":: ";
-		std::cin.clear();
-		std::cin >> choice;
+	choice = request_choice_input({0,1,2,3,4});
+
+	switch (choice) {
+		case 0: {
+			Algorithms::select(begin, end, output_list.push_backer(), [](DataHandling::LandUnitData* unused) {return true;});
+			break;
+		};
+		case 1: {
+			std::cout << "Zadajte reťazec" << std::endl;
+			std::cout << ":: ";
+
+			std::string substring;
+			std::cin.ignore();
+			std::getline(std::cin, substring);
+
+			Algorithms::select(begin, end, output_list.push_backer(), Algorithms::ContainsSubstringInName(substring));
+			break;
+		};
+		case 2: {
+			std::cout << "Zadaj rok [2020-2024]" << std::endl;
+			int year = request_choice_input({2020, 2021, 2022, 2023, 2024});
+
+			std::cout << "Zadaj limit" << std::endl;
+			int limit = request_choice_input({});
+
+			Algorithms::select(begin, end, output_list.push_backer(), Algorithms::HasMaxResidents::InYear(year, limit));
+			break;
+		}
+		case 3: {
+			std::cout << "Zadaj rok [2020-2024]" << std::endl;
+			int year = request_choice_input({2020, 2021, 2022, 2023, 2024});
+
+			std::cout << "Zadaj limit" << std::endl;
+			int limit = request_choice_input({});
+
+			Algorithms::select(begin, end, output_list.push_backer(), Algorithms::HasMinResidents::InYear(year, limit));
+			break;
+		}
+		case 4: {
+			std::cout << "Zadaj administrativny level [0-4]" << std::endl;
+			int level = request_choice_input({0,1,2,3,4});
+
+			Algorithms::select(begin, end, output_list.push_backer(), Algorithms::UnitLevelIs(level));
+			break;
+		}
+	}
 
 
+	std::cout << "Vysledok" << std::endl;
+	for (auto item : output_list) {
+		print_land_unit(item);
 	}
 };
 
