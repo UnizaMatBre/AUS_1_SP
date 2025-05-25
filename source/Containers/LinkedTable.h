@@ -163,7 +163,7 @@ namespace Containers {
 
 			auto find_result = this->find_node_(key);
 			if (find_result.second != nullptr) {
-				throw std::out_of_range("Key already exists.");
+				throw std::out_of_range("Key '" + key + "' already exists.");
 			}
 
 			Node* new_node = std::allocator_traits<NodeAllocatorType>::allocate(this->nodeAllocator_, 1);
@@ -180,7 +180,7 @@ namespace Containers {
 		ValueType& at(const KeyType& key) {
 			auto find_result = this->find_node_(key);
 			if (find_result.second == nullptr) {
-				throw std::out_of_range("Key doesn't exists.");
+				throw std::out_of_range("Key '" + key + "' doesn't exists.");
 			}
 
 			return find_result.second->value();
@@ -189,7 +189,7 @@ namespace Containers {
 		ValueType& at(const KeyType& key) const {
 			auto find_result = this->find_node_(key);
 			if (find_result.second == nullptr) {
-				throw std::out_of_range("Key doesn't exists.");
+				throw std::out_of_range("Key '" + key + "' doesn't exists.");
 			}
 
 			return find_result.second->value();
