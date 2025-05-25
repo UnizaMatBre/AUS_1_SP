@@ -25,7 +25,7 @@ DataHandling::DataHolder::DataHolder() {
 	// load upper areas
 	{
 		// open stream
-		auto stream = std::ifstream(R"(../../data/geograficke_oblasti.csv)");
+		auto stream = std::ifstream(R"(../../data/uzemie.csv)");
 		std::string line;
 
 		if (not stream.is_open()) {
