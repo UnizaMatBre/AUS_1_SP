@@ -81,6 +81,7 @@ DataHandling::DataHolder::DataHolder() {
 		stream.close();
 	};
 
+	// load town categorization
 	{
 		// open stream
 		auto stream = std::ifstream(R"(../../data/obce.csv)");
