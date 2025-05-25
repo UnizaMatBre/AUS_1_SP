@@ -5,6 +5,32 @@
 #include "DataHolder.h"
 
 
+/**
+* Job of this is to just add population into all parent nodes
+*/
+void add_population_(Containers::TreeNode<DataHandling::LandUnitData*>* node, int category, size_t year_index, int population) {
+	if (node == nullptr) {
+		return;
+	}
+
+	add_population_(node->get_parent(), category, year_index, population);
+
+	switch (category) {
+		case 0: {
+			node->get_item()->male_population_at(year_index) +=  population;
+			break;
+		};
+		case 1: {
+			node->get_item()->female_population_at(year_index) +=  population;
+			break;
+		};
+		default: {
+			throw std::runtime_error("Category does not exist");
+		}
+	}
+
+}
+
 DataHandling::DataHolder::DataHolder() {
 
 	/*
@@ -130,6 +156,80 @@ DataHandling::DataHolder::DataHolder() {
 			}
 			// insert land node into mapper
 			id_to_node_mapper.insert(restricted_id, new_land_node_ptr);
+		};
+	};
+
+
+	// load town population data
+	{
+		std::ifstream streams[] = {
+			std::ifstream(R"(../../data/2020.csv)"),
+			std::ifstream(R"(../../data/2021.csv)"),
+			std::ifstream(R"(../../data/2022.csv)"),
+			std::ifstream(R"(../../data/2023.csv)"),
+			std::ifstream(R"(../../data/2024.csv)"),
+		};
+
+		for (auto& sideStream : streams) {
+			if (!sideStream.is_open()) {
+				throw std::runtime_error("Error opening file stream.");
+			};
+		};
+
+		std::string lines[5];
+		while (getline(streams[0], lines[0])) {
+			for (size_t index = 1; index < 5; index++) {
+				getline(streams[index], lines[index]);
+			}
+
+
+			// find node we will be filling with data
+			LandNodeType* current_land_node = nullptr;
+			bool is_special_case = false;
+
+			// we will find this by reading part of first line
+			DataHandling::CsvLineReader(lines[0])
+				.skipField()
+				->handleField([&current_land_node, &id_to_node_mapper, &is_special_case](const std::string& field ) {
+					auto restricted_town_id = field.substr(1, field.size() - 2);
+
+					try {
+						current_land_node = id_to_node_mapper.at(restricted_town_id);
+					}
+					catch (std::out_of_range& e) {
+						// only one item will trigger this - "Nicht klassifizierbar"
+						// i don't know what job it has, but it is not used anwyhere, soo...
+						is_special_case = true;
+					}
+			});
+
+			// is special case? Skip it
+			if (is_special_case) {
+				is_special_case = false;
+				continue;;
+			}
+
+			// iterate over all lines
+			for (size_t index = 0; index < 5; ++index) {
+				DataHandling::CsvLineReader(lines[index])
+					.skipField()->skipField() // skip first two fields
+					->handleField([&index, &current_land_node](const std::string& field ) {
+						auto population = std::stoi(field);
+
+						add_population_(current_land_node, 0, index, population );
+					})
+					->skipField()
+					->handleField([&index, &current_land_node](const std::string& field ) {
+						auto population = std::stoi(field);
+
+						add_population_(current_land_node, 1, index, population );
+					});
+			};
+
+		};
+
+		for (auto& stream : streams) {
+			stream.close();
 		};
 	};
 
