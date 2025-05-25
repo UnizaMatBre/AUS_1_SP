@@ -148,12 +148,10 @@ DataHandling::DataHolder::DataHolder() {
 			auto list = Containers::LinkedList<LandUnitData*>();
 			list.push_back(new_land_unit_ptr);
 
-			try {
-				this->towns_table_.insert(name, list);
-			}
-			catch (std::out_of_range& e) {
+			if (this->towns_table_.try_insert(name, list) == nullptr) {
 				this->towns_table_.at(name).push_back(new_land_unit_ptr);
 			}
+
 			// insert land node into mapper
 			id_to_node_mapper.insert(restricted_id, new_land_node_ptr);
 		};

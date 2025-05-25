@@ -177,6 +177,24 @@ namespace Containers {
 			return new_node->value();
 		};
 
+		ValueType* try_insert(const KeyType& key, const ValueType& value) {
+			this->resolve_fullness_();
+
+			auto find_result = this->find_node_(key);
+			if (find_result.second != nullptr) {
+				return nullptr;
+			}
+
+			Node* new_node = std::allocator_traits<NodeAllocatorType>::allocate(this->nodeAllocator_, 1);
+			std::allocator_traits<NodeAllocatorType>::construct(this->nodeAllocator_, new_node, std::make_pair(key, value));
+
+			new_node->next = this->buckets_[find_result.first];
+			this->buckets_[find_result.first] = new_node;
+
+			++this->itemCount_;
+
+			return &new_node->value();
+		};
 		ValueType& at(const KeyType& key) {
 			auto find_result = this->find_node_(key);
 			if (find_result.second == nullptr) {
