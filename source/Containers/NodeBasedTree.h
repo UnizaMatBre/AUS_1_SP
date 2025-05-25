@@ -132,6 +132,16 @@ namespace Containers {
 				return *this;
 			};
 
+			bool operator==(const Iterator& other) {
+				return this->position_ == other.position_;
+			}
+
+			bool operator!=(const Iterator& other) {
+				return this->position_ != other.position_;
+			}
+
+
+
 			/**
 			* Tries to move to the parent node
 			*
@@ -178,9 +188,19 @@ namespace Containers {
 
 				// we looked all siblings and selector was not happy with any of them
 				return false;
-			}
+			};
+
+
 
 		};
+
+		Iterator begin() {
+			return Iterator(this, this->nodeAllocator_);
+		}
+
+		Iterator end() {
+			return Iterator(nullptr, this->nodeAllocator_);
+		}
 
 	};
 
