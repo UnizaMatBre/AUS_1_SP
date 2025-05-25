@@ -58,7 +58,7 @@ void ConsoleEnvironment::show_tree_menu() {
 		std::cout << std::endl;
 
 		std::cout << "[1] presun hore" << std::endl;
-		std::cout << "[2] presun dole podľa podreťazca v mene" << std::endl;
+		std::cout << "[2] presun dole podľa mena" << std::endl;
 		std::cout << "[3] presun dole podľa id" << std::endl;
 		std::cout << "[5] resetuj iterator" << std::endl;
 		std::cout << "[0] koniec " << std::endl;
@@ -91,16 +91,13 @@ void ConsoleEnvironment::show_tree_menu() {
 				std::cout << std::endl;
 
 				auto ok = tree_iterator.move_to_children([&target_name](auto& land_unit) {
-					return land_unit.get_item()->get_name().find(target_name) != std::string::npos;
+					return land_unit.get_item()->get_name() == target_name;
 				});
 
 				if (ok) { std::cout << "Iterátor sa úspešne preniesol na dieťa" << std::endl; }
 				else { std::cout << "Dieťa z daným reťazcom v mene neexistuje." << std::endl; }
 			};
-			case 5: {
-				tree_iterator = this->holder_.get_tree_iterator();
-				break;
-			};
+
 
 			case 3: {
 				std::string target_id;
@@ -115,6 +112,11 @@ void ConsoleEnvironment::show_tree_menu() {
 				if (ok) { std::cout << "Iterátor sa úspešne preniesol na dieťa" << std::endl; }
 				else { std::cout << "Dieťa z id neexistuje" << std::endl; }
 			}
+
+			case 5: {
+				tree_iterator = this->holder_.get_tree_iterator();
+				break;
+			};
 
 			default: {
 				std::cout << "Neznáma volba : " << choice << std::endl;
