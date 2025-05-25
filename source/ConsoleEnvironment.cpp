@@ -1,13 +1,16 @@
 #include <iostream>
 
+#include "Algorithms/Querying.h"
+#include "Algorithms/Sorting.h"
+#include "Algorithms/Predicates.h"
+#include "Algorithms/Comparators.h"
+
 #include "DataHandling/LandUnitData.h"
 #include "Containers/NodeBasedTree.h"
 
 
 #include "ConsoleEnvironment.h"
 
-#include "Algorithms/Comparators.h"
-#include "Algorithms/Predicates.h"
 
 
 void print_land_unit(DataHandling::LandUnitData* land_unit) {
@@ -16,25 +19,36 @@ void print_land_unit(DataHandling::LandUnitData* land_unit) {
 		std::cout << " ( " <<  land_unit->male_population_at(index) << " : " << land_unit->female_population_at(index) << " ) ";
  	};
 	std::cout << std::endl;
-
 }
+
+int request_choice_input(std::initializer_list<int> valid_choices) {
+	int choice = -1;
+
+	while (true) {
+		std::cout << std::endl;
+		std::cout << ":: ";
+		std::cin >> choice;
+
+		for (auto& one_valid_choice : valid_choices) {
+			if (choice == one_valid_choice) {
+				return one_valid_choice;
+			}
+		}
+
+		std::cout << "Neznáma volba : " << choice << std::endl;
+	};
+};
 
 void ConsoleEnvironment::show_main_menu() {
 	int choice = -1;
 
 	while (true) {
 		std::cout << "== MENU ==" << std::endl;
-		std::cout << "[1] nástroje zoznamu uzemných jednotiek" << std::endl;
 		std::cout << "[2] nástroje stromu uzemných jednotiek" << std::endl;
 		std::cout << "[3] tabulky uzemných jednotiek" << std::endl;
 		std::cout << "[0] koniec" << std::endl;
-		std::cout << std::endl;
-		std::cout << ":: ";
-		std::cin >> choice;
-		std::cout << std::endl;
 
-		std::cout << "----------------------" << std::endl;
-
+		choice = request_choice_input({0,2,3});
 		switch (choice) {
 			case 0: {
 				std::cout << "Ukončenie programu" << std::endl;
@@ -60,9 +74,33 @@ void ConsoleEnvironment::show_main_menu() {
 };
 
 
+
+using TreeIterator = Containers::TreeNode<DataHandling::LandUnitData*>::Iterator;
+
+void show_selection_submenu(TreeIterator& begin, TreeIterator& end) {
+	Containers::LinkedList<DataHandling::LandUnitData*> output_list;
+	int choice = -1;
+
+	std::cout << "== SELEKCIA ==" << std::endl;
+	std::cout << "Vyberte predikat:" << std::endl;
+	std::cout << "[0] alwaysTrue - akceptuje všetky prvky." << std::endl;
+	std::cout << "[1] containsStr - nazov obsahuje zadaný retazec." << std::endl;
+	std::cout << "[2] hasMaxResidents - v zadanom roku ma menej občanov ako limit" << std::endl;
+	std::cout << "[3] hasMinResidents - v zadanom roku ma menej občanov ako limit"  << std::endl;
+
+	while (true) {
+		std::cout << std::endl;
+		std::cout << ":: ";
+		std::cin.clear();
+		std::cin >> choice;
+
+
+	}
+};
+
 void ConsoleEnvironment::show_tree_menu() {
 	auto tree_iterator = this->holder_.get_tree_iterator();
-
+	auto tree_iterator_end = this->holder_.root_node_.end();
 	int choice = -1;
 
 	while (true) {
@@ -74,18 +112,14 @@ void ConsoleEnvironment::show_tree_menu() {
 		std::cout << "[1] presun hore" << std::endl;
 		std::cout << "[2] presun dole podľa mena" << std::endl;
 		std::cout << "[3] presun dole podľa id" << std::endl;
-		std::cout << "[5] resetuj iterator" << std::endl;
+		std::cout << "[4] resetuj iterator" << std::endl;
+		std::cout << "[5] selektuj z iteratorov" << std::endl;
 		std::cout << "[0] koniec " << std::endl;
-		std::cout << std::endl;
 
-		std::cout << ":: ";
-		std::cin >> choice;
-		std::cout << std::endl;
-		std::cout << "----------------------" << std::endl;
+		choice = request_choice_input({0,1,2,3,4,5});
 
 		switch (choice) {
 			case 0: {
-				std::cout << "Ukončenie pod-menu" << std::endl;
 				return;
 			};
 
@@ -127,10 +161,15 @@ void ConsoleEnvironment::show_tree_menu() {
 				else { std::cout << "Dieťa z id neexistuje" << std::endl; }
 			}
 
-			case 5: {
+			case 4: {
 				tree_iterator = this->holder_.get_tree_iterator();
 				break;
 			};
+
+			case 5: {
+				show_selection_submenu(tree_iterator, tree_iterator_end);
+				break;
+			} ;
 
 			default: {
 				std::cout << "Neznáma volba : " << choice << std::endl;
@@ -151,17 +190,9 @@ void ConsoleEnvironment::show_tables_menu() {
 
 
 		std::cout << "Vyber level administrativnej jednotky (1-4)" << std::endl;
-		while (true) {
-			std::cout << ":: ";
-			std::cin.clear();
-			std::cin >> table_number;
-			std::cout << std::endl;
+		std::cin.clear();
+		table_number = request_choice_input({1,2,3,4});
 
-			if (table_number >= 1 && table_number <= 4) {
-				break;
-			};
-			std::cout << "Neplatné čislo" << std::endl;
-		};
 
 		std::string table_unit_name;
 
@@ -172,6 +203,7 @@ void ConsoleEnvironment::show_tables_menu() {
 		std::getline(std::cin, table_unit_name);
 		std::cout << std::endl;
 
+		std::cout << "Vysledok:" << std::endl << "  ";
 		try {
 			switch (table_number) {
 				case 1: {
@@ -207,16 +239,18 @@ void ConsoleEnvironment::show_tables_menu() {
 			std::cout << "Jednotka na danej úrovni z daným názvom neexistuje" << std::endl;
 		}
 
-		std::cout << "-------------------" << std::endl;
-
 		std::cout << std::endl;
-		std::cout << "Koniec? [0 ak ano] [iná klávesa ak nie]" << std::endl;
-		std::cout << ":: ";
-		std::cin >> table_number;
+		std::cout << "Koniec? [0 ak ano] [1 ak nie]" << std::endl;
+		table_number = request_choice_input({0,1});
+
 		if (table_number == 0) {
 			return;
 		}
 	};
 
 }
+
+
+
+
 
