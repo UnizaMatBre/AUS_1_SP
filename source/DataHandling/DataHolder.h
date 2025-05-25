@@ -41,6 +41,8 @@ namespace DataHandling {
 	*/
 
 	class DataHolder {
+	public:
+
 		// table for each level of land unit
 		Containers::LinkedTable<std::string, LandUnitData*> geographic_areas_table_;
 		Containers::LinkedTable<std::string, LandUnitData*> republics_table_;

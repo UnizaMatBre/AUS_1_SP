@@ -1,6 +1,9 @@
 add_executable(main_app
         main.cpp
 
+        ConsoleEnvironment.h
+        ConsoleEnvironment.cpp
+
         Algorithms/Querying.h
         Algorithms/Sorting.h
         Algorithms/Predicates.h
