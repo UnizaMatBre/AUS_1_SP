@@ -9,6 +9,16 @@
 #include "Algorithms/Comparators.h"
 #include "Algorithms/Predicates.h"
 
+
+void print_land_unit(DataHandling::LandUnitData* land_unit) {
+	std::cout << land_unit->get_name() << " [ " << land_unit->get_identifier()  << " ] | ";
+	for (size_t index = 0; index < DataHandling::LAND_UNIT_POPULATION_COUNT; ++index) {
+		std::cout << " ( " <<  land_unit->male_population_at(index) << " : " << land_unit->female_population_at(index) << " ) ";
+ 	};
+	std::cout << std::endl;
+
+}
+
 void ConsoleEnvironment::show_main_menu() {
 	int choice = -1;
 
@@ -35,6 +45,10 @@ void ConsoleEnvironment::show_main_menu() {
 				this->show_tree_menu();
 				break;
 			}
+			case 3: {
+				this->show_tables_menu();
+				break;
+			};
 
 			default: {
 				std::cout << "Neznáma volba : " << choice << std::endl;
@@ -126,5 +140,79 @@ void ConsoleEnvironment::show_tree_menu() {
 		std::cout << "----------------------" << std::endl;
 
 	}
+}
+
+
+void ConsoleEnvironment::show_tables_menu() {
+	while (true) {
+		std::cout << "== TABULKY ==" << std::endl;
+
+		int table_number = 0;
+
+
+		std::cout << "Vyber level administrativnej jednotky (1-4)" << std::endl;
+		while (true) {
+			std::cout << ":: ";
+			std::cin >> table_number;
+			std::cout << std::endl;
+
+			if (table_number >= 1 && table_number <= 4) {
+				break;
+			};
+			std::cout << "Neplatné čislo" << std::endl;
+		};
+
+		std::string table_unit_name;
+
+		std::cout << std::endl;
+		std::cout << "Vyber meno vyhladávanej administratívnej jednotky" << std::endl;
+		std::cout << ":: ";
+		std::cin.ignore();
+		std::getline(std::cin, table_unit_name);
+		std::cout << std::endl;
+
+		try {
+			switch (table_number) {
+				case 1: {
+					const auto result = this->holder_.geographic_areas_table_.at(table_unit_name);
+					print_land_unit(result);
+					break;
+				};
+				case 2: {
+					const auto result = this->holder_.republics_table_.at(table_unit_name);
+					print_land_unit(result);
+					break;
+				};
+				case 3: {
+					const auto result = this->holder_.regions_table_.at(table_unit_name);
+					print_land_unit(result);
+					break;
+
+				};
+				case 4: {
+					auto result = this->holder_.towns_table_.at(table_unit_name);
+					for (auto& one_town : result) {
+						print_land_unit(one_town);
+						std::cout << std::endl;
+					}
+					break;
+				};
+				default: {
+					throw std::runtime_error("This isn't allowed");
+				};
+			}
+		}
+		catch (std::out_of_range& e) {
+			std::cout << "Jednotka na danej úrovni z daným názvom neexistuje" << std::endl;
+		}
+
+		std::cout << std::endl;
+		std::cout << "Koniec? [0 ak ano]" << std::endl;
+		std::cin >> table_number;
+		if (table_number == 0) {
+			return;
+		}
+	};
+
 }
 

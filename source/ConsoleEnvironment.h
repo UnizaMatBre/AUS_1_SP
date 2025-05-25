@@ -7,7 +7,7 @@
 class ConsoleEnvironment {
 	DataHandling::DataHolder& holder_;
 
-
+	void show_tables_menu();
 	void show_tree_menu();
 
 public:
